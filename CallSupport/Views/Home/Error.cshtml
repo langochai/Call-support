@@ -1,0 +1,46 @@
+﻿@{
+    Layout = null;
+}
+<link href="~/assets/bundles/bootstrap-5.3.3/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f8f9fa;
+    }
+
+    .error-container {
+        text-align: center;
+        padding: 2em;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .error-message {
+        font-size: 1.5em;
+        margin-bottom: 1em;
+    }
+/* 
+    .back-button {
+        padding: 0.5em 1em;
+        font-size: 1em;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        } */
+</style>
+<div class="error-container">
+    <p class="error-message">Đã có lỗi xảy ra</p>
+    <a href="/" class="btn btn-outline-success">Quay lại trang chủ</a>
+</div>

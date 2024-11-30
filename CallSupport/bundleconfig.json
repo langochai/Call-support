@@ -1,0 +1,14 @@
+[
+  {
+    "outputFileName": "wwwroot/css/Login/styles.min.css",
+    "inputFiles": [
+      "wwwroot/css/Login/styles.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/assets/bundles/font-awesome/fontawesome.min.css",
+    "inputFiles": [
+      "wwwroot/assets/bundles/font-awesome/fontawesome.css"
+    ]
+  }
+]

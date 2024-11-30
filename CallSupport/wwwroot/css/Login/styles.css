@@ -1,0 +1,244 @@
+﻿
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    /*    background: linear-gradient(to right, #FFAB00, #E65100);*/
+    background: rgb(203 197 199);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 !important;
+}
+
+
+/* Login Card */
+.login-card {
+    width: 450px;
+    background: rgba(255, 255, 255, .5);
+    padding: 4rem;
+    border-radius: 10px;
+    position: relative;
+    padding-top: 10px !important;
+    padding-bottom: 40px;
+}
+
+/* Login Card Logo */
+.login-card-logo {
+    margin-bottom: 0;
+}
+
+    .login-card-logo img {
+        width: 70%;
+    }
+/* ---------- */
+
+/* Login Card Standard */
+.login-card-logo,
+.login-card-header,
+.login-card-footer {
+    text-align: center;
+}
+
+.login-card a {
+    text-decoration: none;
+    color: #35339a;
+}
+
+    .login-card a:hover {
+        text-decoration: underline;
+    }
+/* ---------- */
+
+/* Login Card Header */
+.login-card-header {
+    margin-bottom: 0;
+}
+
+    .login-card-header h1 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+        .login-card-header h1 + div {
+            font-size: calc(1rem * .8);
+            opacity: .8;
+        }
+/* ---------- */
+
+/* Login Card Form */
+.login-card-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+    .login-card-form .form-item {
+        position: relative;
+    }
+
+        .login-card-form .form-item .form-item-icon {
+            position: absolute;
+            top: .82rem;
+            left: 1.4rem;
+            font-size: 1.3rem;
+            opacity: .4;
+        }
+
+    .login-card-form .checkbox {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .login-card-form .form-item-other {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: calc(1rem * .8);
+        margin-bottom: .5rem;
+    }
+/* ---------- */
+
+/* Login Card Footer */
+.login-card-footer {
+    margin-top: 1.5rem;
+    font-size: calc(1rem * .8);
+}
+/* ---------- */
+
+/* Login Card Form Elements */
+.login-card input[type="text"],
+.login-card input[type="password"],
+.login-card input[type="email"] {
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, .3);
+    padding: 1rem 1.5rem;
+    padding-left: calc(1rem * 3.5);
+    border-radius: 100px;
+    width: 80%;
+    transition: background .5s;
+}
+
+.login-card input:focus {
+    background: white;
+}
+
+.login-card input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: black;
+}
+
+.login-card button {
+    background: #4CAF50;
+    color: black;
+    padding: 1rem;
+    border-radius: 100px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: background .5s;
+    border-color: #4CAF50 !important;
+}
+
+    .login-card button:hover {
+        background-color: #1B5E20;
+        cursor: pointer;
+        color: white;
+        border-color: #1B5E20 !important;
+    }
+
+    .login-card button.disable {
+        background-color: gray;
+        cursor: progress;
+    }
+/* ---------- */
+
+/* Login Card Social Buttons */
+/*.login-card-social {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.login-card-social>div {
+    opacity: .8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: calc(1rem * .8);
+}
+
+.login-card-social-btns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.login-card-social-btns a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(255, 255, 255, .6);
+    border-radius: 100px;
+    transition: all .5s;
+}
+
+.login-card-social-btns a:hover {
+    background-color: white;
+    transform: scale(1.1);
+}*/
+/* ---------- */
+
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    /*    body {
+        padding: 2rem 0;
+    }*/
+
+    .login-card-container {
+        padding: 2rem;
+    }
+
+    .login-card {
+        width: 100%;
+        padding: 2rem;
+    }
+}
+/* ---------- */
+.material-symbols-rounded {
+    font-family: 'Material Symbols Rounded';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+
+.error-text {
+    color: red;
+    margin: 0 !important;
+}
+
+@font-face {
+    font-family: 'Material Symbols Rounded';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../../assets/bundles/fonts/font-face.woff2') format('woff2');
+}
