@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CallSupport.Controllers
 {
-    public class CallController : Controller
+    public class SupportController : Controller
     {
         public IActionResult Index()
         {
@@ -14,7 +14,7 @@ namespace CallSupport.Controllers
                 return RedirectToAction("Index", "Login", null);
             }
             ViewBag.FullName = user.FullName;
-            ViewBag.Switchable = user.IsRepair;
+            ViewBag.Switchable = user.IsCaller;
             return View();
         }
     }

@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="~/assets/bundles/bootstrap-5.3.3/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/assets/bundles/font-awesome/fontawesome.min.css" />
+    <script src="~/assets/bundles/jQuery/jquery-3.7.1.min.js"></script>
     <style>
         .gradient-custom {
             background: #6a11cb;
@@ -52,7 +53,7 @@
                                            type="password" placeholder="Mật khẩu" id="password" name="password" required>
                                 </div>
                                 <div style="width:40%">
-                                    <input id="remember_me" type="checkbox" />
+                                    <input id="remember_me" name="remember" type="checkbox" />
                                     <label for="remember_me">Ghi nhớ</label>
                                 </div>
                                 <div class="d-flex justify-content-center">
@@ -69,49 +70,7 @@
             </div>
         </div>
     </section>
-
-    <script src="~/assets/bundles/jQuery/jquery-3.7.1.min.js"></script>
-    <script>
-        var submitRequest
-        $('form').on('submit', e => {
-            e.preventDefault();
-            $('.message').removeClass('error-text').text('Vui lòng chờ')
-            $('button[type="submit"]').html(
-                `<div class="btn-parts"><i class="fa-solid fa-spinner fa-spin-pulse"></i></div></div>
-                <div class="btn-parts">Đang đăng nhập</div>
-                <div class="btn-parts"></div>`)
-            $('button[type="submit"]').attr('disable', 'true')
-            if (submitRequest) return
-            submitRequest = $.post({
-                url: '/Login',
-                data: {
-                    username: $('#username').val(),
-                    password: $('#password').val(),
-                },
-                success: data => {
-                    $('.error-text').fadeOut()
-                    $('button[type="submit"]')
-                    .html(`<div class="btn-parts"></div>
-                            <div class="btn-parts middle"><i class="fa-solid fa-check fa-bounce"></i></div>
-                            <div class="btn-parts"></div>`)
-                    window.location.href = data;   
-                },
-                error: err => {
-                    err.status == 401 ?
-                        $('.message').html(err.responseText) // sai tài khoản hoặc mật khẩu
-                        :
-                        $('.message').html(err.responseText.substring(0, 50))
-                        $('.message').addClass('error-text')
-                    $('button[type="submit"]').html(`<div class="btn-parts"></div>
-                                                <div class="btn-parts">Đăng nhập</div>
-                                                <div class="btn-parts"></div>`)
-                    submitRequest = null
-                },
-                complete: () => {
-                    $('button[type="submit"]').removeAttr('disable')
-                }
-            })
-        })
-    </script>
+    <script src="~/js/ajax-setting.js"></script>
+    <script src="/js/Login/main.js"></script>
 </body>
 </html>
