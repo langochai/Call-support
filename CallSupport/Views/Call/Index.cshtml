@@ -1,5 +1,185 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<link href="~/css/Caller/styles.css" rel="stylesheet" />
+<div class="w-100 p-3" style="background-color: #f6f6f6;margin-bottom:75px">
+    <div class="mb-2">
+        <input class="form-control" style="width: 200px; display: inline" type="text" value="@ViewBag.UserName" readonly />
+        <button class="btn btn-primary" style="display:inline"><i class="fas fa-redo-alt"></i>  Làm mới</button>
+    </div>
+    <section>
+        <h3>1. Chọn vị trí</h3>
+        <hr />
+        <div class="mb-2">
+            <input class="form-control" style="width: 200px; display: inline" type="text" id="positions" />
+            <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
+        </div>
+        <div class="table-container">
+            <table class="table table-bordered table-hover bg-light">
+                <colgroup>
+                    <col style="width:30%" />
+                    <col style="width:70%" />
+                </colgroup>
+                <thead>
+                    <tr class="table-active">
+                        <th>Ký hiệu cột</th>
+                        <th>Mô tả cột</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section>
+        <h3>2. Chọn dây chuyền</h3>
+        <hr />
+        <div class="mb-2">
+            <input class="form-control" style="width: 200px; display: inline" type="text" oninput="return false" />
+            <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
+        </div>
+        <table class="table table-bordered table-hover bg-light">
+            <colgroup>
+                <col style="width:30%" />
+                <col style="width:70%" />
+            </colgroup>
+            <thead>
+                <tr class="table-active">
+                    <th style="width:30%">Mã dây chuyền</th>
+                    <th style="width:70%">Tên dây chuyền</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>01</td>
+                    <td>Line01</td>
+                </tr>
+                <tr>
+                    <td>02</td>
+                    <td>Line02</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    <section>
+        <h3>3. Chọn công đoạn</h3>
+        <hr />
+        <div class="mb-2">
+            <input class="form-control" style="width: 200px; display: inline" type="text" oninput="return false" />
+            <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
+        </div>
+        <table class="table table-bordered table-hover bg-light">
+            <colgroup>
+                <col style="width:30%" />
+                <col style="width:70%" />
+            </colgroup>
+            <thead>
+                <tr class="table-active">
+                    <th style="width:30%">Mã công đoạn</th>
+                    <th style="width:70%">Tên công đoạn</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>01</td>
+                    <td>Công đoạn 1</td>
+                </tr>
+                <tr>
+                    <td>02</td>
+                    <td>Công đoạn 2</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    <section>
+        <h3>4. Chọn bộ phận</h3>
+        <hr />
+        <div class="mb-2">
+            <input class="form-control" style="width: 200px; display: inline" type="text" oninput="return false" />
+            <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
+        </div>
+        <table class="table table-bordered table-hover bg-light">
+            <colgroup>
+                <col style="width:30%" />
+                <col style="width:70%" />
+            </colgroup>
+            <thead>
+                <tr class="table-active">
+                    <th style="width:30%">Mã bộ phận</th>
+                    <th style="width:70%">Tên bộ phận</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>IS</td>
+                    <td>Bộ phận IS</td>
+                </tr>
+                <tr>
+                    <td>ADM</td>
+                    <td>Bộ phận ADM</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    <section>
+        <h3>5. Chọn lỗi</h3>
+        <hr />
+        <div class="mb-2">
+            <input class="form-control" style="width: 200px; display: inline" type="text" oninput="return false" />
+            <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
+        </div>
+        <table class="table table-bordered table-hover bg-light">
+            <colgroup>
+                <col style="width:30%" />
+                <col style="width:70%" />
+            </colgroup>
+            <thead>
+                <tr class="table-active">
+                    <th style="width:30%">Mã lỗi</th>
+                    <th style="width:70%">Tên lỗi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>01</td>
+                    <td>Lỗi số một</td>
+                </tr>
+                <tr>
+                    <td>02</td>
+                    <td>Lỗi số hai</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    <section>
+        <h3>6. Chọn dụng cụ</h3>
+        <hr />
+        <div class="mb-2">
+            <input class="form-control" style="width: 200px; display: inline" type="text" oninput="return false" />
+            <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
+        </div>
+        <!--<div class="container m-0 p-0 bg-light">-->
+        <div class="row m-o px-2 bg-light">
+            <div class="col-2 border bg-light" style="height:160px">
+                <div class="border my-1 mx-auto" style="width:80%;height:60%"><img class="w-100 h-100" src="cable.png" /></div>
+                <div class="mx-auto mt-3 text-center">Dây cáp</div>
+            </div>
+
+        </div>
+        <!--</div>-->
+    </section>
+    <section>
+        <h3>7. Chụp ảnh lỗi</h3>
+        <hr />
+        <div class="bg-light" style="border:3px dashed black; height:400px; border-radius:1rem;background-image:url('/img/default-img.png');background-repeat:no-repeat;background-size:100% 100%">
+
+            <div style="margin-top:30%;margin-left:41%">
+
+                <p><span style="border-bottom:1px dashed black">Chọn</span> hoặc <span style="border-bottom:1px dashed black">Chụp</span> ảnh lỗi</p>
+            </div>
+        </div>
+    </section>
+</div>
+<div class="bg-light row mx-auto footer">
+    <button class="btn btn-success col-6"><i class="fas fa-play-circle"></i>   Gọi không dừng</button>
+    <button class="btn btn-danger col-6"><i class="fas fa-stop-circle"></i>   Gọi dừng</button>
+</div>
+<script src="~/js/Caller/ajax-call.js"></script>
+<script src="~/js/Caller/main.js"></script>

@@ -132,6 +132,22 @@ namespace CallSupport.Repositories
             return table.Where(predicate).ToList();
         }
         /// <summary>
+        /// Find a specific record
+        /// </summary>
+        /// <param name="predicate">A lambda function to filter the records, must return a boolean value</param>
+        /// <param name="offset">Number of offset</param>
+        /// <param name="limit">Number of limit</param>
+        /// <returns>A list of filtered records</returns>
+        public List<T> Find(Expression<Func<T, bool>> predicate, int offset = 0, int limit = 0)
+        {
+            var query = table.Where(predicate);
+            if (offset > 0) query = query.Skip(offset);
+            if (limit > 0) query = query.Take(limit);
+            return query.ToList();
+        }
+
+
+        /// <summary>
         /// Bulk insert multiple records
         /// </summary>
         /// <param name="items">Records that need to be saved</param>

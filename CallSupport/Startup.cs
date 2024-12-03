@@ -158,7 +158,7 @@ namespace CallSupport
                    pattern: "{controller=Home}/{action=Index}/");
                 endpoints.MapHub<NotificationHub>("/notificationHub");
             });
-            app.UseStatusCodePagesWithRedirects("/Home/Error");
+            //app.UseStatusCodePagesWithRedirects("/Home/Error");
         }
     }
 }

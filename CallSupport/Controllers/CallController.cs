@@ -13,6 +13,7 @@ namespace CallSupport.Controllers
             {
                 return RedirectToAction("Index", "Login", null);
             }
+            ViewBag.UserName = user.UserName;
             ViewBag.FullName = user.FullName;
             ViewBag.Switchable = user.IsRepair;
             return View();
