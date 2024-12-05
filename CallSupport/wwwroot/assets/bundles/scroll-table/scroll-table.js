@@ -25,15 +25,17 @@
             const table = $(this);
             const tableContainer = table.closest('.table-container');
             const tableBody = table.find('tbody');
-
+            let lastScrollTop = 0
             async function onScroll() {
                 const scrollTop = tableContainer.scrollTop();
                 const scrollHeight = tableContainer[0].scrollHeight;
                 const clientHeight = tableContainer[0].clientHeight;
-
-                if (scrollTop + clientHeight >= scrollHeight - 5 && !settings.isLoading) {
-                    settings.rowCount = await settings.loadMoreRows(tableBody, settings.rowCount);
+                if (scrollTop > lastScrollTop) {
+                    if (scrollTop + clientHeight >= scrollHeight - 5 && !settings.isLoading) {
+                        settings.rowCount = await settings.loadMoreRows(tableBody, settings.rowCount);
+                    }
                 }
+                lastScrollTop = scrollTop;
             }
             tableContainer.on('scroll.scrollTable', onScroll);
 

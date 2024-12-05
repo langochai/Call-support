@@ -26,4 +26,8 @@
     <None Include="bundleconfig.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\Caller\" />
+  </ItemGroup>
+
 </Project>

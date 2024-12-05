@@ -16,6 +16,7 @@ namespace CallSupport.Controllers
             ViewBag.UserName = user.UserName;
             ViewBag.FullName = user.FullName;
             ViewBag.Switchable = user.IsRepair;
+            ViewBag.SwitchURL = "/Repair";
             return View();
         }
     }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CallSupport.Controllers
 {
-    public class SupportController : Controller
+    public class RepairController : Controller
     {
         public IActionResult Index()
         {
@@ -15,6 +15,7 @@ namespace CallSupport.Controllers
             }
             ViewBag.FullName = user.FullName;
             ViewBag.Switchable = user.IsCaller;
+            ViewBag.SwitchURL = "/Call";
             return View();
         }
     }

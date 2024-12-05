@@ -1,7 +1,68 @@
 ﻿.footer {
-    position: fixed;
-    left:0;
-    bottom: 0;
-    height: 70px;
-    width: 100%;
+	position: fixed;
+	left: 50%;
+	bottom: 0;
+	transform: translate(-50%, 0);
+	height: 50px;
+	width: 100%;
+	z-index: 101;
+}
+@media (min-width: 768px) {
+	.footer {
+		width: 85%;
+	}
+}
+@media (min-width: 992px) {
+	.footer {
+		width: 70%;
+	}
+}
+.input-option {
+	border-bottom: 1px dashed black;
+	cursor: pointer;
+}
+.input-option:hover {
+	color: deepskyblue;
+}
+.img-area {
+	border: 3px dashed black;
+	height: 500px;
+	max-height: 600px;
+	border-radius: 1rem;
+}
+.img-preview {
+	flex-grow: 9;
+	max-height: 85%;
+}
+.img-carousel {
+	height: calc(100% - 24px);
+}
+.img-input {
+	flex-grow: 1;
+}
+.prev-img,
+.next-img {
+	font-size: 36px;
+	cursor: pointer;
+}
+.current-img {
+	position: relative;
+}
+.current-img img {
+	display: none;
+	height: 420px;
+	width: 550px;
+	max-width: 100%;
+	max-height: 100%;
+}
+.current-img img.active {
+	display: block;
+}
+.delete-img {
+	position: absolute;
+	top: 0;
+	right: 0;
+	cursor: pointer;
+	color: red;
+	font-size: 30px;
 }

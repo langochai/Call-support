@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>QR Code Scanner and Decryption</title>
+    <script src="~/assets/bundles/jsqr/jsqr.js"></script>
+    <style>
+        #video {
+            width: 300px;
+            height: 200px;
+        }
+
+        #canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <div id="result"></div>
+    <button id="start">Start</button>
+    <p id="error_text"></p>
+    <script>
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const resultDiv = document.getElementById("result");
+
+        async function startVideo() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" },
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                document.getElementById('error_text').innerHTML = err.toString()
+            }
+        }
+
+        function scanQRCode() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                if (code) {
+                    processQRCode(code.data);
+                }
+            }
+            requestAnimationFrame(scanQRCode);
+        }
+
+        async function processQRCode(data) {
+            try {
+                // Parsing the QR code data
+                const { iv, encryptedData } = JSON.parse(data);
+
+                // Get the encryption key from localStorage
+                const keyData = localStorage.getItem("encryptionKey");
+                const key = await window.crypto.subtle.importKey(
+                    "jwk",
+                    JSON.parse(keyData),
+                    {
+                        name: "AES-GCM",
+                    },
+                    true,
+                    ["encrypt", "decrypt"]
+                );
+
+                // Decrypt the data
+                const decryptedData = await decryptData(
+                    key,
+                    new Uint8Array(iv),
+                    new Uint8Array(encryptedData)
+                );
+
+                // Parse the decrypted data
+                const parsedData = JSON.parse(decryptedData);
+                const expirationDate = new Date(parsedData.expires);
+                const currentDate = new Date();
+
+                if (currentDate <= expirationDate) {
+                    resultDiv.innerText = "Valid QR Code: " + parsedData.url;
+                } else {
+                    resultDiv.innerText = "Expired QR Code";
+                }
+            } catch (error) {
+                resultDiv.innerText = "Invalid QR Code";
+            }
+        }
+
+        async function decryptData(key, iv, encryptedData) {
+            const decryptedData = await window.crypto.subtle.decrypt(
+                {
+                    name: "AES-GCM",
+                    iv: iv,
+                },
+                key,
+                encryptedData
+            );
+
+            const decoder = new TextDecoder();
+            return decoder.decode(decryptedData);
+        }
+
+        start.onclick = () => {
+            startVideo();
+            scanQRCode();
+        };
+    </script>
+</body>
+</html>

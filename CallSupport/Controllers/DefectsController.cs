@@ -7,10 +7,11 @@ namespace CallSupport.Controllers
     {
         [HttpGet]
         [Route("/Defects")]
-        public IActionResult Index(string search)
+        public IActionResult Index(string search = "", int offset = 0)
         {
+            int limit = 10; //number of returned rows
             var DefectRepo = new DefectRepo();
-            var defects = DefectRepo.Find(d => d.Maloi.Contains(search) || d.Tenloi.Contains(search));
+            var defects = DefectRepo.Find(d => d.Maloi.Contains(search) || d.Tenloi.Contains(search), offset, limit);
             return Json(defects, new System.Text.Json.JsonSerializerOptions());
         }
     }
