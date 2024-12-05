@@ -22,6 +22,10 @@ namespace CallSupport.Controllers
             {
                 return RedirectToAction("Index", "Support", null);
             }
+            if (user.IsMaster)
+            {
+                return RedirectToAction("Index", "Master", null);
+            }
             return RedirectToAction("Error");
         }
         public IActionResult Error()

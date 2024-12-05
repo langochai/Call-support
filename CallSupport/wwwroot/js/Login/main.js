@@ -12,7 +12,18 @@ $(() => {
     else {
         $('body').css('display','block')
     }
+    $('#password').parent().hide()
+    $('#login_master').on('change', function () {
+        if (this.checked) {
+            $('#password').parent().show()
+            $('#remember_me').parent().hide()
+        } else {
+            $('#password').parent().hide()
+            $('#remember_me').parent().show()
+        }
+    })
     $('form').on('submit', e => {
+        console.log('bruh');
         e.preventDefault();
         $('.message').removeClass('error-text').text('Vui lòng chờ')
         $('button[type="submit"]').html(
@@ -26,7 +37,8 @@ $(() => {
             data: {
                 username: $('#username').val(),
                 password: $('#password').val(),
-                remember: $('#remember_me').prop('checked')
+                remember: $('#remember_me').prop('checked'),
+                asMaster: $('#login_master').prop('checked'),
             },
             success: data => {
                 $('.error-text').fadeOut()

@@ -8,5 +8,6 @@
         public string Password { get; set; }
         public bool IsCaller { get; set; }
         public bool IsRepair { get; set; }
+        public bool IsMaster { get; set; }
     }
 }
