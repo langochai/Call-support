@@ -2,7 +2,7 @@
 
 namespace CallSupport.Repositories
 {
-    public class DefectRepo: GenericRepository<QadefectMst>
+    public class HistoryRepo: GenericRepository<HistoryMst>
     {
     }
 }

@@ -83,10 +83,22 @@
     <input type="checkbox" id="toggle-side-bar" />
     <div id="side-bar">
         <nav id="navigation-container">
-            <ul id="navigation-list">
-                <li><a href="#">Item 1</a></li>
-                <li><a href="#">Item 2</a></li>
-                <li><a href="#">Item 3</a></li>
+            <ul id="navigation-list" class="p-1">
+                <li class="my-3 py-2">
+                    <a href="#">
+                        @if (Convert.ToBoolean(ViewBag.IsCaller) && ViewBag.SwitchURL == "/Repair")
+                        {
+                            <span><i class="fa-solid fa-phone"></i> Gọi hỗ trợ</span>
+                        }
+                        else
+                        {
+                            <span><i class="fa-solid fa-screwdriver-wrench"></i> Trả lời hỗ trợ</span>
+                        }
+                    </a>
+                </li>
+                <li class="my-3 py-2">
+                    <a href="#"><i class="fa-solid fa-list"></i> Lịch sử</a>
+                </li>
             </ul>
         </nav>
     </div>

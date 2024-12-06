@@ -285,5 +285,13 @@ namespace CallSupport.Common
                 }
             }
         }
+        /// <summary>
+        /// Use this shit if the current time of DB is not correctly set
+        /// </summary>
+        /// <returns>Current time of database</returns>
+        public static DateTime GetDate()
+        {
+            return Convert.ToDateTime(ExecuteScalarQuery("SELECT GETDATE()", null, null));
+        }
     }
 }

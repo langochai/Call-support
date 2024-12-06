@@ -13,6 +13,7 @@ namespace CallSupport.Controllers
             {
                 return RedirectToAction("Index", "Login", null);
             }
+            ViewBag.IsCaller = user.IsCaller;
             ViewBag.FullName = user.FullName;
             ViewBag.Switchable = user.IsCaller;
             ViewBag.SwitchURL = "/Call";

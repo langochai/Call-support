@@ -17,7 +17,9 @@ namespace CallSupport.Models.Context
         }
 
         public virtual DbSet<CallerMst> CallerMst { get; set; }
+        public virtual DbSet<DefectMst> DefectMst { get; set; }
         public virtual DbSet<DepMst> DepMst { get; set; }
+        public virtual DbSet<HistoryMst> HistoryMst { get; set; }
         public virtual DbSet<LineMst> LineMst { get; set; }
         public virtual DbSet<PosMst> PosMst { get; set; }
         public virtual DbSet<QadefectMst> QadefectMst { get; set; }
@@ -79,6 +81,55 @@ namespace CallSupport.Models.Context
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<DefectMst>(entity =>
+            {
+                entity.HasKey(e => new { e.Maloi, e.DepC })
+                    .HasName("PK_Error_mst");
+
+                entity.ToTable("Defect_mst");
+
+                entity.Property(e => e.Maloi)
+                    .HasColumnName("maloi")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DepC)
+                    .HasColumnName("Dep_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComputerName)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.GroupdefectC)
+                    .HasColumnName("groupdefect_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Ipaddress)
+                    .HasColumnName("IPaddress")
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Sort)
+                    .HasColumnName("sort")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Tenloi)
+                    .HasColumnName("tenloi")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.UpDt)
+                    .HasColumnName("up_dt")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("UserID")
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<DepMst>(entity =>
             {
                 entity.HasKey(e => e.DepC);
@@ -119,6 +170,165 @@ namespace CallSupport.Models.Context
                 entity.Property(e => e.UserId)
                     .HasColumnName("UserID")
                     .HasMaxLength(25)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<HistoryMst>(entity =>
+            {
+                entity.HasKey(e => new { e.CallingTime, e.LineC, e.SecC, e.PosC, e.Ipaddress })
+                    .HasName("PK__history___E019F78A0DAF0CB0");
+
+                entity.ToTable("history_mst");
+
+                entity.HasIndex(e => new { e.CallingTime, e.LineC, e.SecC, e.PosC, e.Ipaddress })
+                    .HasName("B001");
+
+                entity.Property(e => e.CallingTime)
+                    .HasColumnName("Calling_time")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.LineC)
+                    .HasColumnName("Line_c")
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SecC)
+                    .HasColumnName("Sec_c")
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PosC)
+                    .HasColumnName("Pos_c")
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Ipaddress)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AssyStop).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.CallerC)
+                    .HasColumnName("Caller_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CancelC)
+                    .HasColumnName("Cancel_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CancelTime)
+                    .HasColumnName("Cancel_time")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ComputerName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ConfirmC)
+                    .HasColumnName("Confirm_c")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ConfirmDep)
+                    .HasColumnName("confirm_dep")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ConfirmTime)
+                    .HasColumnName("Confirm_time")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.DepC)
+                    .HasColumnName("Dep_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DepCCancel)
+                    .HasColumnName("Dep_c_cancel")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DepCFinish)
+                    .HasColumnName("Dep_c_finish")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DepCRep)
+                    .HasColumnName("Dep_c_rep")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ErrC)
+                    .HasColumnName("Err_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ErrC1)
+                    .HasColumnName("Err_c1")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FinishC)
+                    .HasColumnName("Finish_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FinishTime)
+                    .HasColumnName("Finish_time")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.RepC)
+                    .HasColumnName("Rep_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RepairingTime)
+                    .HasColumnName("Repairing_time")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.SoGioNghiGiuaGio).HasColumnName("So_gio_nghi_giua_gio");
+
+                entity.Property(e => e.SoGioSuaThucTe).HasColumnName("So_gio_sua_thuc_te");
+
+                entity.Property(e => e.StatusCalling)
+                    .IsRequired()
+                    .HasColumnName("Status_calling")
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasComment("0- cho, 1- ng sua da den, 2- ng sua hoan thanh, 3 - cancel, 4- ");
+
+                entity.Property(e => e.StatusDatetime)
+                    .HasColumnName("Status_datetime")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.StatusLine).HasColumnName("Status_line");
+
+                entity.Property(e => e.StatusUpdateDep)
+                    .HasColumnName("Status_update_dep")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.StatusUpdateUser)
+                    .HasColumnName("Status_update_user")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Stopline).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.ToDepC)
+                    .HasColumnName("ToDep_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UptDt)
+                    .HasColumnName("Upt_dt")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Ver)
+                    .HasColumnName("ver")
+                    .HasMaxLength(50)
                     .IsUnicode(false);
             });
 
