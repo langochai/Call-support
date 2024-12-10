@@ -1,21 +1,8 @@
-﻿.footer {
-	position: fixed;
-	left: 50%;
-	bottom: 0;
-	transform: translate(-50%, 0);
-	height: 50px;
-	width: 100%;
-	z-index: 50;
+﻿main{
+	padding: 30px;
 }
-@media (min-width: 768px) {
-	.footer {
-		width: 85%;
-	}
-}
-@media (min-width: 992px) {
-	.footer {
-		width: 70%;
-	}
+.table-container{
+	height: 320px;
 }
 .table .active-row td {
 	background-color: skyblue !important;

@@ -1,5 +1,6 @@
 ﻿using CallSupport.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CallSupport.Controllers
 {
@@ -11,7 +12,8 @@ namespace CallSupport.Controllers
         {
             int limit = 10; //number of returned rows
             var DefectRepo = new QADefectRepo();
-            var defects = DefectRepo.Find(d => d.Maloi.Contains(search) || d.Tenloi.Contains(search), offset, limit);
+            var defects = DefectRepo.Find(d => d.Maloi.Contains(search) || EF.Functions.Like(d.Tenloi, $"%{search}%"),
+                offset, limit, d => d.Sort);
             return Json(defects, new System.Text.Json.JsonSerializerOptions());
         }
     }

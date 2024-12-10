@@ -15,9 +15,11 @@
     <link href="~/assets/bundles/izitoast/css/izitoast.min.css" rel="stylesheet" />
     <script src="~/assets/bundles/izitoast/js/izitoast.min.js"></script>
     <link href="~/assets/bundles/side-bar/side-bar.css" rel="stylesheet" />
-    <script src="~/assets/bundles/side-bar/side-bar.js"></script>
+    @* <script src="~/assets/bundles/side-bar/side-bar.js"></script> *@
     <link href="~/assets/bundles/scroll-table/scroll-table.css" rel="stylesheet" />
     <script src="~/assets/bundles/scroll-table/scroll-table.js"></script>
+    <script src="~/assets/bundles/qrcode/qrcode.min.js"></script>
+    <script src="~/assets/bundles/jsqr/jsqr.js"></script>
     <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body>
@@ -31,7 +33,7 @@
         </div>
         @* <div class="flex-grow-1 d-flex justify-content-center w-50"></div> *@
         <div class="flex-grow-1 d-flex justify-content-end w-25">
-            <div class="dropdown">
+            @* <div class="dropdown">
                 <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -45,7 +47,7 @@
                     <li>
                     </li>
                 </ul>
-            </div>
+            </div> *@
             <div class="dropdown">
                 <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                     <img alt="profile" src="~/img/default-profile.png" class="user-img-radious-style m-0"
@@ -54,10 +56,15 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <span class="dropdown-header">
-                            User: @ViewBag.FullName
+                            User: @ViewBag.User.FullName
                         </span>
                     </li>
-                    @if (ViewBag.Switchable)
+                    <li>
+                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#login_qr_modal">
+                            <i class="fa-solid fa-qrcode"></i> Mã QR đăng nhập
+                        </a>
+                    </li>
+                    @if (Convert.ToBoolean(ViewBag.Switchable))
                     {
                         <li>
                             <a class="dropdown-item" href="@ViewBag.SwitchURL">
@@ -86,7 +93,7 @@
             <ul id="navigation-list" class="p-1">
                 <li class="my-3 py-2">
                     <a href="#">
-                        @if (Convert.ToBoolean(ViewBag.IsCaller) && ViewBag.SwitchURL == "/Repair")
+                        @if (Convert.ToBoolean(ViewBag.User.IsCaller) && ViewBag.SwitchURL == "/Repair")
                         {
                             <span><i class="fa-solid fa-phone"></i> Gọi hỗ trợ</span>
                         }
@@ -97,7 +104,14 @@
                     </a>
                 </li>
                 <li class="my-3 py-2">
-                    <a href="#"><i class="fa-solid fa-list"></i> Lịch sử</a>
+                    @if (Convert.ToBoolean(ViewBag.User.IsCaller) && ViewBag.SwitchURL == "/Repair")
+                    {
+                        <a href="/Call/History"><i class="fa-solid fa-list"></i> Lịch sử</a>
+                    }
+                    else
+                    {
+                        <a href="/Call/History"><i class="fa-solid fa-list"></i> Lịch sử</a>
+                    }
                 </li>
             </ul>
         </nav>
@@ -108,6 +122,28 @@
             @RenderBody()
         </main>
     </div>
+    <div class="modal" tabindex="-1" id="login_qr_modal">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mã QR đăng nhập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="login_qrcode" class="d-flex justify-content-center"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="save_login_qr">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input id="UserName" type="text" value="@ViewBag.User.UserName" hidden readonly aria-hidden="true" />
+    <input id="Department" type="text" value="@ViewBag.User.Department" hidden readonly aria-hidden="true" />
+    @if (ViewBag.User.IsCaller)
+    {
+        <input id="IsCaller" type="checkbox" checked hidden readonly aria-hidden="true" />
+    }
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)

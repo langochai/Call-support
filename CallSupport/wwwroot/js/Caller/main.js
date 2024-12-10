@@ -5,10 +5,13 @@
     loadData('#departments', getDepartments, ['DepC', 'DepNm'])
     loadData('#defects', getDefects, ['Maloi', 'Tenloi'])
     createCarousel()
+    displayTools()
+    $('#tools').on('input', displayTools)
+    $('#tools-display').on('click', '.tools-options', function () {$(this).toggleClass('picked-tool')} )
     insertImageButton()
     pickOptionOnTable()
+    $('.footer .btn').on('click', submitData)
 })
-// Load data ***********************************************
 async function loadData(selector, getData, columns) {
     const input = $(selector)
     const table = input.parent().next()
@@ -31,7 +34,6 @@ async function loadData(selector, getData, columns) {
         })
     })
 }
-// **********************************************************
 function createCarousel() {
     let currentIndex = 0;
     const $currentImgDiv = $('.current-img');
@@ -65,36 +67,63 @@ function createCarousel() {
     $('#defect_img').on('change', function (event) {
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = 'Selected Image';
-                img.classList.add('mx-auto')
-                $currentImgDiv.append(img)
-                currentIndex = $currentImgDiv.find('img').length - 1
-                updateCarousel()
-                $('#defect_img').val('')
-            };
-            reader.readAsDataURL(file);
+            //const reader = new FileReader();  //// this works fine but I don't like it, got some overheads
+            //reader.onload = function (e) {
+            //    const img = document.createElement('img');
+            //    img.src = e.target.result;
+            //    img.alt = 'Selected Image';
+            //    img.classList.add('mx-auto')
+            //    $currentImgDiv.append(img)
+            //    currentIndex = $currentImgDiv.find('img').length - 1
+            //    updateCarousel()
+            //    $('#defect_img').val('')
+            //};
+            //reader.readAsDataURL(file);
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.alt = 'Selected Image';
+            img.classList.add('mx-auto')
+            $currentImgDiv.append(img)
+            currentIndex = $currentImgDiv.find('img').length - 1
+            updateCarousel()
+            $('#defect_img').val('')
         }
     })
     $('.current-img').on('click', 'img', function () {
-        const img = this;
-        if (img.requestFullscreen) {
-            img.requestFullscreen();
-        } else if (img.mozRequestFullScreen) { // Firefox
-            img.mozRequestFullScreen();
-        } else if (img.webkitRequestFullscreen) { // Chrome, Safari and Opera
-            img.webkitRequestFullscreen();
-        } else if (img.msRequestFullscreen) { // IE/Edge
-            img.msRequestFullscreen();
-        }
+        convertIMG(this, '/Images/Defect')
+        //const img = this;
+        //if (img.requestFullscreen) {
+        //    img.requestFullscreen();
+        //} else if (img.mozRequestFullScreen) { // Firefox
+        //    img.mozRequestFullScreen();
+        //} else if (img.webkitRequestFullscreen) { // Chrome, Safari and Opera
+        //    img.webkitRequestFullscreen();
+        //} else if (img.msRequestFullscreen) { // IE/Edge
+        //    img.msRequestFullscreen();
+        //}
     })
     updateCarousel()
     $(window).on('resize', function () {
         updateCarousel();
     });
+}
+async function displayTools() {
+    const search = $('#tools').val()?.trim()
+    $('#tools-display').empty()
+    const data = await getTools(search)
+    if (!data.length) return;
+    data.forEach(d => {
+        const $tool = $(
+            `<div class="col-6 col-md-3 col-lg-2 border bg-light tools-options" style="height:160px">
+                <div class="border my-1 mx-auto" style="width:80%;height:60%">
+                    <img class="w-100 h-100" src="${d.Img}" />
+                </div>
+                <div class="mx-auto mt-3 text-center">${d.ToolNm}</div>
+            </div>`
+        )
+        $tool.data('tool-id', d.Id)
+        $('#tools-display').append($tool)
+    })
 }
 function insertImageButton() {
     $('.img-input').on('click', '.input-option', function (e) {
@@ -125,4 +154,20 @@ function validateData() {
         iziToast.warning({ title: 'Thông báo', message: 'Vui lòng chụp ảnh lỗi', displayMode: 1, position: 'topRight' })
         isVeryVeryOK = false
     }
+    return isVeryVeryOK
+}
+async function submitData() {
+    if (!validateData()) return
+    const data =
+    {
+        CallerC : $('#UserName').val(),
+        DepC : $('#Department').val(),
+        LineC : $('#lines').parent().next().find('tbody tr[class="active-row"] td:first').text(),
+        SecC : $('#sections').parent().next().find('tbody tr[class="active-row"] td:first').text(),
+        PosC : $('#positions').parent().next().find('tbody tr[class="active-row"] td:first').text(),
+        ToDepC : $('#departments').parent().next().find('tbody tr[class="active-row"] td:first').text(),
+        ErrC : $('#defects').parent().next().find('tbody tr[class="active-row"] td:first').text(),
+        StatusLine : $('.footer .btn').index(this).toString(),
+    }
+    await createCall(data)
 }

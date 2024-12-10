@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CallSupport.Common;
+using CallSupport.Models.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CallSupport.Controllers
 {
@@ -6,6 +8,9 @@ namespace CallSupport.Controllers
     {
         public IActionResult Index()
         {
+            var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
+            if (!user.IsMaster) return StatusCode(403, "Bạn không có quyền truy cập.");
+            ViewBag.User = user;
             return View();
         }
     }

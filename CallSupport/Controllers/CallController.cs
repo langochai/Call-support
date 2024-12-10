@@ -13,9 +13,7 @@ namespace CallSupport.Controllers
         {
             var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
             if (user.UserName == null) return RedirectToAction("Index", "Login", null);
-            ViewBag.IsCaller = user.IsCaller;
-            ViewBag.UserName = user.UserName;
-            ViewBag.FullName = user.FullName;
+            ViewBag.User = user;
             ViewBag.Switchable = user.IsRepair;
             ViewBag.SwitchURL = "/Repair";
             return View();
@@ -40,7 +38,7 @@ namespace CallSupport.Controllers
                     CallingTime = currentTime,
                     CallerC = data.CallerC,
                     DepC = data.DepC,
-                    StatusCalling = "0",
+                    StatusCalling = "0", // why the hell is this a string? the guy who made this DB had problems
                     LineC = data.LineC,
                     SecC = data.SecC,
                     PosC = data.PosC,

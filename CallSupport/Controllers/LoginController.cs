@@ -5,6 +5,7 @@ using CallSupport.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 
 namespace CallSupport.Controllers
 {
@@ -23,8 +24,8 @@ namespace CallSupport.Controllers
             if (!asMaster)
             {
                 var user = SQLHelper<AuthInfoDTO>.ProcedureToModel("spGetUserData",
-                new string[] { "@UserName" },
-                new object[] { username });
+                new string[] { "@UserName", "@Password" },
+                new object[] { username, password });
                 if (user == null || string.IsNullOrEmpty(user.UserName)) return StatusCode(401, "Sai tên đăng nhập!");
                 HttpContext.Session.SetObject<AuthInfoDTO>("User", user);
                 string userInfoJSON = JsonConvert.SerializeObject(user);
@@ -63,14 +64,43 @@ namespace CallSupport.Controllers
             string decryptedText = EncryptionHelper.Decrypt(credentials);
             var userInfo = JsonConvert.DeserializeObject<UserMst>(decryptedText);
             var existingUser = SQLHelper<AuthInfoDTO>.ProcedureToModel("spGetUserData",
-                new string[] { "@UserName" },
-                new object[] { userInfo.UserName });
+                new string[] { "@UserName", "@Password" },
+                new object[] { userInfo.UserName, userInfo.Password });
             if (existingUser != null || !string.IsNullOrEmpty(existingUser.UserName))
             {
                 HttpContext.Session.SetObject<AuthInfoDTO>("User", existingUser);
                 return Ok();
             }
             else return StatusCode(406, "Nice try funny man");
+        }
+        [HttpPost]
+        public IActionResult QRcodeLogin([FromBody] string credentials)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(credentials)) return BadRequest();
+                var decrypted = EncryptionHelper.Decrypt(credentials);
+                var userInfo = decrypted.Split(";;;"); // 3 semicolons from the custom format above
+                if (userInfo.Length != 2) return Forbid("Bruh that's not right");
+                var user = SQLHelper<AuthInfoDTO>.ProcedureToModel("spGetUserData",
+                    new string[] { "@UserName", "@Password" },
+                    new object[] { userInfo[0], userInfo[1] });
+                if (user == null || string.IsNullOrEmpty(user.UserName)) return Forbid("BRUH What the hell?");
+                HttpContext.Session.SetObject<AuthInfoDTO>("User", user);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet]
+        public IActionResult QRcode()
+        {
+            var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
+            if (user.UserName == null) return Forbid("Xác thực thất bại");
+            string credentials = EncryptionHelper.Encrypt($"{user.UserName};;;{user.Password}"); //custom format to reduce length
+            return Ok(credentials);
         }
     }
 }

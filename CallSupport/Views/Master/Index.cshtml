@@ -1,5 +1,176 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<link href="~/css/Master/styles.css" rel="stylesheet" />
+<section id="Positions">
+    <h3>1. Chọn vị trí</h3>
+    <hr />
+    <div class="mb-2">
+        <input class="form-control" style="width: 180px; display: inline" type="text" id="positions" placeholder="Tìm kiếm"/>
+        <button class="btn btn-success" title="Thêm mới" data-bs-toggle="modal" data-bs-target="#modal_position"><i class="fa-solid fa-plus"></i>  Thêm mới</button>
+    </div>
+    <div class="table-container">
+        <table class="table table-bordered table-hover bg-light">
+            <colgroup>
+                <col style="width:30%" />
+                <col style="width:60%" />
+                <col style="width:10%" />
+            </colgroup>
+            <thead>
+                <tr class="table-active">
+                    <th>Ký hiệu cột</th>
+                    <th>Mô tả cột</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section id="Lines">
+    <h3>2. Chọn dây chuyền</h3>
+    <hr />
+    <div class="mb-2">
+        <input class="form-control" style="width: 180px; display: inline" type="text" id="lines" placeholder="Tìm kiếm" />
+        <button class="btn btn-success" title="Thêm mới" data-bs-toggle="modal" data-bs-target="#modal_line"><i class="fa-solid fa-plus"></i>  Thêm mới</button>
+    </div>
+    <div class="table-container">
+        <table class="table table-bordered table-hover bg-light">
+            <colgroup>
+                <col style="width:30%" />
+                <col style="width:60%" />
+                <col style="width:10%" />
+            </colgroup>
+            <thead>
+                <tr class="table-active">
+                    <th>Mã dây chuyền</th>
+                    <th>Tên dây chuyền</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section id="Sections">
+    <h3>3. Chọn công đoạn</h3>
+    <hr />
+    <div class="mb-2">
+        <input class="form-control" style="width: 180px; display: inline" type="text" id="sections" placeholder="Tìm kiếm" />
+        <button class="btn btn-success" title="Thêm mới" data-bs-toggle="modal" data-bs-target="#modal_section"><i class="fa-solid fa-plus"></i>  Thêm mới</button>
+    </div>
+    <div class="table-container">
+        <table class="table table-bordered table-hover bg-light">
+            <colgroup>
+                <col style="width:30%" />
+                <col style="width:60%" />
+                <col style="width:10%" />
+            </colgroup>
+            <thead>
+                <tr class="table-active">
+                    <th>Mã công đoạn</th>
+                    <th>Tên công đoạn</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section id="Departments">
+    <h3>4. Chọn bộ phận</h3>
+    <hr />
+    <div class="mb-2">
+        <input class="form-control" style="width: 180px; display: inline" type="text" id="departments" placeholder="Tìm kiếm" />
+        <button class="btn btn-success" title="Thêm mới" data-bs-toggle="modal" data-bs-target="#modal_department"><i class="fa-solid fa-plus"></i>  Thêm mới</button>
+    </div>
+    <div class="table-container">
+        <table class="table table-bordered table-hover bg-light">
+            <colgroup>
+                <col style="width:30%" />
+                <col style="width:60%" />
+                <col style="width:10%" />
+            </colgroup>
+            <thead>
+                <tr class="table-active">
+                    <th>Mã bộ phận</th>
+                    <th>Tên bộ phận</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section id="Defects">
+    <h3>5. Chọn lỗi</h3>
+    <hr />
+    <div class="mb-2">
+        <input class="form-control" style="width: 180px; display: inline" type="text" id="defects" placeholder="Tìm kiếm" />
+        <button class="btn btn-success" title="Thêm mới" data-bs-toggle="modal" data-bs-target="#modal_defect"><i class="fa-solid fa-plus"></i>  Thêm mới</button>
+    </div>
+    <div class="table-container">
+        <table class="table table-bordered table-hover bg-light">
+            <colgroup>
+                <col style="width:30%" />
+                <col style="width:60%" />
+                <col style="width:10%" />
+            </colgroup>
+            <thead>
+                <tr class="table-active">
+                    <th>Mã lỗi</th>
+                    <th>Tên lỗi</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section id="Tools">
+    <h3>6. Chọn dụng cụ</h3>
+    <hr />
+    <div class="mb-2">
+        <input class="form-control" style="width: 180px; display: inline" type="text" id="tools" />
+        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modal_defect"><i class="fas fa-search"></i>  Tìm kiếm</button>
+    </div>
+    <!--<div class="container m-0 p-0 bg-light">-->
+    <div id="tools-container">
+        <div class="row m-o bg-light" id="tools-display">
+        </div>
+    </div>
+    <!--</div>-->
+</section>
+<div class="modal fade" id="modal_input" tabindex="-1" aria-labelledby="modal_input" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modal_title"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <label for="pos_code" class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="first_col">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="pos_name" class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="second_col">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/convert-img-to-blob.js"></script>
+<script src="~/js/Master/ajax-call.js"></script>
+<script src="~/js/Master/main.js"></script>

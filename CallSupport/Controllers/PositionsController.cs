@@ -1,5 +1,6 @@
 ﻿using CallSupport.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace CallSupport.Controllers
 {
@@ -11,7 +12,7 @@ namespace CallSupport.Controllers
         {
             int limit = 10; //number of returned rows
             var positionRepo = new PositionRepo();
-            var postions = positionRepo.Find(p => p.PosC.Contains(search), offset, limit);
+            var postions = positionRepo.Find(p => p.PosC.Contains(search), offset, limit, p => p.Sort).ToList();
             return Json(postions, new System.Text.Json.JsonSerializerOptions());
         }
     }

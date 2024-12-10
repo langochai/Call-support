@@ -1,5 +1,6 @@
 ﻿using CallSupport.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CallSupport.Controllers
 {
@@ -11,7 +12,8 @@ namespace CallSupport.Controllers
         {
             int limit = 10; //number of returned rows
             var sectionRepo = new SectionRepo();
-            var sections = sectionRepo.Find(s => s.SecC.Contains(search) || s.SecNm.Contains(search), offset, limit);
+            var sections = sectionRepo.Find(s => s.SecC.Contains(search) || EF.Functions.Like(s.SecNm, $"%{search}%"),
+                offset, limit, s => s.Sort);
             return Json(sections, new System.Text.Json.JsonSerializerOptions());
         }
     }

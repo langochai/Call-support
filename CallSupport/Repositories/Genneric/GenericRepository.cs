@@ -137,10 +137,12 @@ namespace CallSupport.Repositories
         /// <param name="predicate">A lambda function to filter the records, must return a boolean value</param>
         /// <param name="offset">Number of offset</param>
         /// <param name="limit">Number of limit</param>
+        /// <param name="limit">A lambda function to order the records, must return a boolean value</param>
         /// <returns>A list of filtered records</returns>
-        public List<T> Find(Expression<Func<T, bool>> predicate, int offset = 0, int limit = 0)
+        public List<T> Find(Expression<Func<T, bool>> predicate, int offset = 0, int limit = 0, Expression<Func<T, int?>> orderBy = null)
         {
             var query = table.Where(predicate);
+            if(orderBy != null) query = query.OrderBy(orderBy);
             if (offset > 0) query = query.Skip(offset);
             if (limit > 0) query = query.Take(limit);
             return query.ToList();

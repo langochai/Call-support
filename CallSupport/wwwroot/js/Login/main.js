@@ -10,22 +10,24 @@ $(() => {
         })
     }
     else {
-        $('body').css('display','block')
+        $('body').css('display', 'block')
     }
-    $('#password').parent().hide()
+    //$('#password').parent().hide()
     $('#login_master').on('change', function () {
         if (this.checked) {
-            $('#password').parent().show()
+            //$('#password').parent().show()
             $('#remember_me').parent().hide()
         } else {
-            $('#password').parent().hide()
+            //$('#password').parent().hide()
             $('#remember_me').parent().show()
         }
     })
     $('form').on('submit', e => {
-        console.log('bruh');
         e.preventDefault();
         $('.message').removeClass('error-text').text('Vui lòng chờ')
+        if (!$('#username').val() || !$('#password').val()) {
+            return $('.message').removeClass('error-text').addClass('error-text').text('Vui lòng nhập tên đăng nhập/mật khẩu')
+        }
         $('button[type="submit"]').html(
             `<div class="btn-parts"><i class="fa-solid fa-spinner fa-spin-pulse"></i></div></div>
                 <div class="btn-parts">Đang đăng nhập</div>
@@ -63,6 +65,102 @@ $(() => {
             complete: () => {
                 $('button[type="submit"]').removeAttr('disable')
             }
+        })
+    })
+    $('#qr_code').on('click', function (e) {
+        e.preventDefault()
+        const video = document.getElementById("login_qrcode");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        let stream, currentRequest
+        async function startVideo() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" },
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+            }
+        }
+        function scanQRCode() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                if (code?.data && !currentRequest) {
+                    console.log(code?.data)
+                    $.post({
+                        url: `/Login/QRcodeLogin`,
+                        data: JSON.stringify(code.data.substring(1, code.data.length - 1)),
+                        contentType: 'application/json',
+                        success: () => {
+                            //window.location.href = "/";
+                        },
+                        error: err => {
+                            console.error(err)
+                            iziToast.warning({
+                                title: 'Thông báo',
+                                message: 'Xác nhận không thành công',
+                                displayMode: 'once',
+                                position: 'topRight'
+                            })
+                        }
+                    })
+                }
+            }
+            requestAnimationFrame(scanQRCode);
+        }
+        //startVideo();
+        //scanQRCode();
+        $('label.btn-outline-secondary input').off('change').on('change', function (e) {
+            const file = e.target?.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    const canvas = document.getElementById('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0, img.width, img.height);
+                    const imageData = ctx.getImageData(0, 0, img.width, img.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+                    if (code?.data) {
+                        $.post({
+                            url: `/Login/QRcodeLogin`,
+                            data: JSON.stringify(code.data.substring(1, code.data.length - 1)),
+                            contentType: 'application/json',
+                            success: () => {
+                                window.location.href = "/";
+                            },
+                            error: err => {
+                                console.error(err)
+                                iziToast.warning({
+                                    title: 'Thông báo',
+                                    message: 'Xác nhận không thành công.',
+                                    displayMode: 'once',
+                                    position: 'topRight'
+                                })
+                            }
+                        })
+                    } else {
+                        iziToast.warning({
+                            title: 'Thông báo',
+                            message: 'Mã QR không hợp lệ.',
+                            displayMode: 'once',
+                            position: 'topRight'
+                        })
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         })
     })
 })
