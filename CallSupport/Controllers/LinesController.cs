@@ -11,7 +11,7 @@ namespace CallSupport.Controllers
         {
             int limit = 10; //number of returned rows
             var lineRepo = new LineRepo();
-            var lines = lineRepo.Find(l => l.LineC.Contains(search) || l.LineNm.Contains(search), offset, limit);
+            var lines = lineRepo.Find(l => l.LineC.Contains(search) || l.LineNm.Contains(search), offset, limit, l => l.Sort);
             return Json(lines, new System.Text.Json.JsonSerializerOptions());
         }
     }

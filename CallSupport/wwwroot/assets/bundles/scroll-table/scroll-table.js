@@ -13,6 +13,7 @@
                     options.columns.forEach(c => {
                         row.append($(`<td>${d[c]}</td>`));
                     });
+                    row.data('data', d)
                     tableBody.append(row);
                 });
                 rowCount += data.length;

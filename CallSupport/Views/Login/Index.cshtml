@@ -11,25 +11,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="~/assets/bundles/bootstrap-5.3.3/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/assets/bundles/bootstrap-5.3.3/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="~/assets/bundles/font-awesome/fontawesome.min.css" />
     <script src="~/assets/bundles/jQuery/jquery-3.7.1.min.js"></script>
-    <style>
-        .gradient-custom {
-            background: #6a11cb;
-            background: linear-gradient(to right, rgba(37,117,252,1), rgba(37,117,252,0.5))
-        }
-        .btn-parts{
-            flex-grow:1;
-            min-width:38px;
-        }
-
-        .btn-parts .middle{
-            min-width:120px
-        }
-        .error-text{
-            color:red;
-        }
-    </style>
+    <script src="~/assets/bundles/jsqr/jsqr.js"></script>
+    <link href="~/assets/bundles/izitoast/css/izitoast.min.css" rel="stylesheet" />
+    <script src="~/assets/bundles/izitoast/js/izitoast.min.js"></script>
+    <link href="~/css/login/styles.min.css" rel="stylesheet" />
     <title>ĐĂNG NHẬP HỆ THỐNG</title>
 </head>
 
@@ -40,13 +28,13 @@
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                     <div class="card bg-dark text-white" style="border-radius: 1rem;">
                         <div class="md-md-5 mt-md-4 pb-5 text-center">
-                            <h2 class="text-center">Đăng nhập</h2>
+                            <h2 class="mt-1 text-center">Đăng nhập</h2>
                             <p class="mb-3 message">Vui lòng nhập thông tin đăng nhập</p>
                             <form class="login-card-form" action="Login" method="post">
                                 <p class="error-text" hidden></p>
                                 <div class="form-group mx-5 mb-2">
                                     <input class="form-control"
-                                           type="text" placeholder="Tên đăng nhập" id="username" name="username" autofocus required>
+                                           type="text" placeholder="Tên đăng nhập" id="username" name="username" autofocus>
                                 </div>
                                 <div class="form-group mx-5 mb-2">
                                     <input class="form-control"
@@ -62,8 +50,12 @@
                                         <label for="remember_me">Ghi nhớ</label>
                                     </div>
                                 </div>
+                                <div class="mb-3">
+                                    Bạn đã có mã QR? 
+                                    <span id="qr_code" data-bs-toggle="modal" data-bs-target="#login_qr_modal">Quét mã</span>
+                                </div>
                                 <div class="d-flex justify-content-center">
-                                    <button class="btn btn-outline-light w-50 d-flex" type="submit">
+                                    <button class="btn btn-outline-light w-75 d-flex" type="submit">
                                         <div class="btn-parts"></div>
                                         <div class="btn-parts">Đăng nhập</div>
                                         <div class="btn-parts"></div>
@@ -76,6 +68,25 @@
             </div>
         </div>
     </section>
+    <div class="modal" tabindex="-1" id="login_qr_modal">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mã QR đăng nhập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex flex-column justify-content-center">
+                    <video id="login_qrcode" autoplay></video>
+                    <canvas id="canvas" style="display:none"></canvas>
+                    <div class="text-center my-1">Hoặc</div>
+                    <label class="btn btn-outline-secondary">
+                        Chọn ảnh
+                        <input type="file" accept="image/*" name="qr-code" style="display:none" />
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="~/js/ajax-setting.js"></script>
     <script src="/js/Login/main.js"></script>
 </body>

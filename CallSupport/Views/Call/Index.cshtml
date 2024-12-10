@@ -1,14 +1,14 @@
 ﻿<link href="~/css/Caller/styles.css" rel="stylesheet" />
 <div class="w-100 p-3" style="background-color: #f6f6f6">
     <div class="mb-2">
-        <input class="form-control" style="width: 200px; display: inline" type="text" value="@ViewBag.UserName" readonly />
+        <input class="form-control" style="width: 180px; display: inline" type="text" value="@ViewBag.User.UserName" readonly />
         <button class="btn btn-primary" style="display:inline"><i class="fas fa-redo-alt"></i>  Làm mới</button>
     </div>
     <section>
         <h3>1. Chọn vị trí</h3>
         <hr />
         <div class="mb-2">
-            <input class="form-control" style="width: 200px; display: inline" type="text" id="positions" />
+            <input class="form-control" style="width: 180px; display: inline" type="text" id="positions" />
             <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
         </div>
         <div class="table-container">
@@ -32,7 +32,7 @@
         <h3>2. Chọn dây chuyền</h3>
         <hr />
         <div class="mb-2">
-            <input class="form-control" style="width: 200px; display: inline" type="text" id="lines" />
+            <input class="form-control" style="width: 180px; display: inline" type="text" id="lines" />
             <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
         </div>
         <div class="table-container">
@@ -56,7 +56,7 @@
         <h3>3. Chọn công đoạn</h3>
         <hr />
         <div class="mb-2">
-            <input class="form-control" style="width: 200px; display: inline" type="text" id="sections" />
+            <input class="form-control" style="width: 180px; display: inline" type="text" id="sections" />
             <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
         </div>
         <div class="table-container">
@@ -80,7 +80,7 @@
         <h3>4. Chọn bộ phận</h3>
         <hr />
         <div class="mb-2">
-            <input class="form-control" style="width: 200px; display: inline" type="text" id="departments" />
+            <input class="form-control" style="width: 180px; display: inline" type="text" id="departments" />
             <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
         </div>
         <div class="table-container">
@@ -104,7 +104,7 @@
         <h3>5. Chọn lỗi</h3>
         <hr />
         <div class="mb-2">
-            <input class="form-control" style="width: 200px; display: inline" type="text" id="defects" />
+            <input class="form-control" style="width: 180px; display: inline" type="text" id="defects" />
             <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
         </div>
         <div class="table-container">
@@ -128,18 +128,13 @@
         <h3>6. Chọn dụng cụ</h3>
         <hr />
         <div class="mb-2">
-            <input class="form-control" style="width: 200px; display: inline" type="text" id="tools" />
+            <input class="form-control" style="width: 180px; display: inline" type="text" id="tools" />
             <button class="btn btn-info" style="display:inline"><i class="fas fa-search"></i>  Tìm kiếm</button>
         </div>
         <!--<div class="container m-0 p-0 bg-light">-->
-        <div class="row m-o px-2 bg-light">
-            <div class="col-6 col-md-3 col-lg-2 border bg-light" style="height:160px">
-                <div class="border my-1 mx-auto" style="width:80%;height:60%">
-                    <img class="w-100 h-100" src="uploads/tools/cable.png" />
-                </div>
-                <div class="mx-auto mt-3 text-center">Dây cáp</div>
+        <div id="tools-container">
+            <div class="row m-o bg-light" id="tools-display">
             </div>
-
         </div>
         <!--</div>-->
     </section>
@@ -161,9 +156,9 @@
             </div>
             <div class="img-input d-flex justify-content-center align-items-center">
                 <input type="file" style="display:none" accept="image/*" id="defect_img"/>
-                <label class="w-75 text-center">
-                    <span class="input-option">Chọn</span> hoặc <span class="input-option">Chụp</span> ảnh lỗi
-                </label>
+                <span class="w-75 text-center">
+                    <button class="input-option bg-light">Chọn</button> hoặc <button class="input-option bg-light">Chụp</button> ảnh lỗi
+                </span>
             </div>
         </div>
     </section>
@@ -178,5 +173,6 @@
     <button class="btn btn-success col-6"><i class="fas fa-play-circle"></i>   Gọi không dừng</button>
     <button class="btn btn-danger col-6"><i class="fas fa-stop-circle"></i>   Gọi dừng</button>
 </div>
+<script src="~/js/convert-img-to-blob.js"></script>
 <script src="~/js/Caller/ajax-call.js"></script>
 <script src="~/js/Caller/main.js"></script>

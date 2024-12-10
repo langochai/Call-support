@@ -1,6 +1,8 @@
 ﻿const UserName = $('#UserName').val();
+const Department = $('#Department').val();
+const IsCaller = $('#IsCaller').prop('checked');
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl(`/notificationHub?UserName=${UserName}`)
+    .withUrl(`/notificationHub?UserName=${UserName}&Department=${Department}&IsCaller=${IsCaller}`)
     .build();
 
 connection.start().catch(err => console.error(err.toString()));
