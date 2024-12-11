@@ -27,8 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\uploads\Caller\" />
-    <Folder Include="wwwroot\uploads\Caller\Defect\" />
     <Folder Include="wwwroot\uploads\Repair\" />
   </ItemGroup>
 

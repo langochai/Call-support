@@ -56,7 +56,7 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <span class="dropdown-header">
-                            User: @ViewBag.User.FullName
+                            User: @ViewBag.User?.FullName
                         </span>
                     </li>
                     <li>
@@ -93,7 +93,7 @@
             <ul id="navigation-list" class="p-1">
                 <li class="my-3 py-2">
                     <a href="#">
-                        @if (Convert.ToBoolean(ViewBag.User.IsCaller) && ViewBag.SwitchURL == "/Repair")
+                        @if (Convert.ToBoolean(ViewBag.User?.IsCaller) && ViewBag.SwitchURL == "/Repair")
                         {
                             <span><i class="fa-solid fa-phone"></i> Gọi hỗ trợ</span>
                         }
@@ -104,7 +104,7 @@
                     </a>
                 </li>
                 <li class="my-3 py-2">
-                    @if (Convert.ToBoolean(ViewBag.User.IsCaller) && ViewBag.SwitchURL == "/Repair")
+                    @if (Convert.ToBoolean(ViewBag.User?.IsCaller) && ViewBag.SwitchURL == "/Repair")
                     {
                         <a href="/Call/History"><i class="fa-solid fa-list"></i> Lịch sử</a>
                     }
@@ -138,9 +138,9 @@
             </div>
         </div>
     </div>
-    <input id="UserName" type="text" value="@ViewBag.User.UserName" hidden readonly aria-hidden="true" />
-    <input id="Department" type="text" value="@ViewBag.User.Department" hidden readonly aria-hidden="true" />
-    @if (ViewBag.User.IsCaller)
+    <input id="UserName" type="text" value="@ViewBag.User?.UserName" hidden readonly aria-hidden="true" />
+    <input id="Department" type="text" value="@ViewBag.User?.Department" hidden readonly aria-hidden="true" />
+    @if (ViewBag.User?.IsCaller)
     {
         <input id="IsCaller" type="checkbox" checked hidden readonly aria-hidden="true" />
     }

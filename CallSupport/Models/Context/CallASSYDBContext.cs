@@ -22,7 +22,9 @@ namespace CallSupport.Models.Context
         public virtual DbSet<DepMst> DepMst { get; set; }
         public virtual DbSet<HistoryImg> HistoryImg { get; set; }
         public virtual DbSet<HistoryMst> HistoryMst { get; set; }
-        public virtual DbSet<Images> Images { get; set; }
+        public virtual DbSet<ImagesAfterRepair> ImagesAfterRepair { get; set; }
+        public virtual DbSet<ImagesBeforeRepair> ImagesBeforeRepair { get; set; }
+        public virtual DbSet<ImagesDefect> ImagesDefect { get; set; }
         public virtual DbSet<LineMst> LineMst { get; set; }
         public virtual DbSet<PosMst> PosMst { get; set; }
         public virtual DbSet<QadefectMst> QadefectMst { get; set; }
@@ -362,15 +364,17 @@ namespace CallSupport.Models.Context
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.CompleteImg).HasColumnName("complete_img");
+                entity.Property(e => e.AfterRepairImg).HasColumnName("after_repair_img");
+
+                entity.Property(e => e.BeforeRepairImg).HasColumnName("before_repair_img");
 
                 entity.Property(e => e.DefectImg).HasColumnName("defect_img");
 
-                entity.Property(e => e.Note).HasColumnName("note");
+                entity.Property(e => e.DefectNote).HasColumnName("defect_note");
 
-                entity.Property(e => e.RepairImg).HasColumnName("repair_img");
+                entity.Property(e => e.RepairNote).HasColumnName("repair_note");
 
-                entity.Property(e => e.SupplyImg).HasColumnName("supply_img");
+                entity.Property(e => e.Tools).HasColumnName("tools");
             });
 
             modelBuilder.Entity<HistoryMst>(entity =>
@@ -532,11 +536,11 @@ namespace CallSupport.Models.Context
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Images>(entity =>
+            modelBuilder.Entity<ImagesAfterRepair>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .ValueGeneratedNever();
+                entity.ToTable("Images_after_repair");
+
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnName("created_date")
@@ -544,7 +548,39 @@ namespace CallSupport.Models.Context
 
                 entity.Property(e => e.ImgAddress).HasColumnName("img_address");
 
-                entity.Property(e => e.IsFromCaller).HasColumnName("is_from_caller");
+                entity.Property(e => e.UserIdCreated)
+                    .HasColumnName("user_id_created")
+                    .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<ImagesBeforeRepair>(entity =>
+            {
+                entity.ToTable("Images_before_repair");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnName("created_date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ImgAddress).HasColumnName("img_address");
+
+                entity.Property(e => e.UserIdCreated)
+                    .HasColumnName("user_id_created")
+                    .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<ImagesDefect>(entity =>
+            {
+                entity.ToTable("Images_defect");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnName("created_date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ImgAddress).HasColumnName("img_address");
 
                 entity.Property(e => e.UserIdCreated)
                     .HasColumnName("user_id_created")

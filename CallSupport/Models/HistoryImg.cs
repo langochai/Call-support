@@ -9,10 +9,11 @@ namespace CallSupport.Models
         public string LineC { get; set; }
         public string SecC { get; set; }
         public string PosC { get; set; }
-        public string Note { get; set; }
+        public string Tools { get; set; }
+        public string DefectNote { get; set; }
+        public string RepairNote { get; set; }
         public string DefectImg { get; set; }
-        public string RepairImg { get; set; }
-        public string CompleteImg { get; set; }
-        public string SupplyImg { get; set; }
+        public string BeforeRepairImg { get; set; }
+        public string AfterRepairImg { get; set; }
     }
 }

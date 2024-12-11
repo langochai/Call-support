@@ -1,0 +1,243 @@
+﻿<link href="~/css/Repair/styles.css" rel="stylesheet" />
+<div class="pt-5">
+    <table class="table table-bordered table-hover">
+        <colgroup>
+            <col class="th-left" />
+            <col class="th-right" />
+        </colgroup>
+        <thead class="table-header">
+            <tr>
+                <th class="align-middle"><span style="color:DodgerBlue">Vị trí: </span>Cột B1</th>
+                <th rowspan="4" class="align-middle">
+                    <h5 style="color:DodgerBlue">Dụng cụ</h5>
+                    <div id="caller_tools">
+                        <div class="bg-light img-area d-flex flex-column" style="height:250px">
+                            <div class="img-preview d-flex flex-column">
+                                <div class="img-page d-flex justify-content-center">
+                                    <span id="current_page"></span>/<span id="max_page"></span>
+                                </div>
+                                <div class="img-carousel row p-0 m-0">
+                                    <div class="prev-img col-1 h-100 d-flex align-items-center" style="font-size:10px">
+                                        <i class="fa-solid fa-angle-left text-center w-100"></i>
+                                    </div>
+                                    <div class="current-img col-10 h-100 d-flex justify-content-center">
+                                        @* <div class="delete-img px-2"><i class="fa-solid fa-xmark"></i></div> *@
+                                        <img src="~/uploads/Tools/cable.png" style="width:220px" />
+                                        <img src="~/uploads/Tools/dvd.png" style="width:220px" />
+                                        <img src="~/uploads/Tools/hard-drive.png" style="width:220px" />
+                                    </div>
+                                    <div class="next-img col-1 h-100 d-flex align-items-center" style="font-size:10px">
+                                        <i class="fa-solid fa-angle-right text-center w-100"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class="align-middle"><span style="color:DodgerBlue">Dây chuyền: </span>PILOT L1</th>
+            </tr>
+            <tr>
+                <th class="align-middle"><span style="color:DodgerBlue">Công đoạn: </span>Bàn lắp ráp</th>
+            </tr>
+            <tr>
+                <th class="align-middle"><span style="color:DodgerBlue">Lỗi: </span>Buộc dây không đúng</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    <h5 style="color:DodgerBlue">Ảnh lỗi</h5>
+                    <div class="px-1 px-md-5" id="caller_defects">
+                        <div class="bg-light img-area d-flex flex-column">
+                            <div class="img-preview d-flex flex-column">
+                                <div class="img-page d-flex justify-content-center">
+                                    <span id="current_page"></span>/<span id="max_page"></span>
+                                </div>
+                                <div class="img-carousel row p-0 m-0">
+                                    <div class="prev-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-left text-center w-100"></i></div>
+                                    <div class="current-img col-10 h-100">
+                                        <img src="~/uploads/caller/defect/dummy-defect.jpg" />
+                                        @* <div class="delete-img px-2"><i class="fa-solid fa-xmark"></i></div> *@
+                                    </div>
+                                    <div class="next-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-right text-center w-100"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h5 style="color:DodgerBlue">Ghi chú từ người gọi</h5>
+                    <textarea class="form-control" readonly></textarea>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center" id="button_receive">
+        <button class="btn btn-primary px-5" style="font-size:3rem">Nhận</button>
+    </div>
+    <div>
+        <div class="mb-5">
+            <h5 style="color:DodgerBlue">Ảnh trước khi sửa</h5>
+            <div class="px-1 px-md-5 mt-3 mt-md-5" id="before_repair_img">
+                <div class="bg-light img-area d-flex flex-column">
+                    <div class="img-preview d-flex flex-column">
+                        <div class="img-page d-flex justify-content-center">
+                            <span id="current_page"></span>/<span id="max_page"></span>
+                        </div>
+                        <div class="img-carousel row p-0 m-0">
+                            <div class="prev-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-left text-center w-100"></i></div>
+                            <div class="current-img col-10 h-100">
+                                <img src="~/uploads/caller/defect/before-repair.jpg" />
+                                <div class="delete-img px-2"><i class="fa-solid fa-xmark"></i></div>
+                            </div>
+                            <div class="next-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-right text-center w-100"></i></div>
+                        </div>
+                    </div>
+                    <div class="img-input d-flex justify-content-center align-items-center">
+                        <input type="file" style="display:none" accept="image/*" id="defect_img" />
+                        <span class="w-75 text-center">
+                            <button class="input-option bg-light">Chọn</button> hoặc <button class="input-option bg-light">Chụp</button> ảnh lỗi
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center" id="button_start_repair">
+            <button class="btn btn-warning px-5" style="font-size:3rem">Sửa</button>
+        </div>
+    </div>
+    <div class="mb-5">
+        <section>
+            <h3 style="color:DodgerBlue">Chọn mã nhóm lỗi</h3>
+            <hr />
+            <div class="mb-2">
+                <input class="form-control"
+                       style="width: 200px; display: inline"
+                       type="text"
+                       oninput="return false" />
+                <button class="btn btn-info" style="display: inline">
+                    <i class="fas fa-search"></i> Tìm kiếm
+                </button>
+            </div>
+            <table class="table table-bordered table-hover bg-light">
+                <thead>
+                    <tr class="table-active">
+                        <th style="width: 30%">Mã nhóm lỗi</th>
+                        <th style="width: 70%">Tên nhóm lỗi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01</td>
+                        <td>Lỗi Máy Tính</td>
+                    </tr>
+                    <tr>
+                        <td>02</td>
+                        <td>Lỗi phần mềm</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section>
+            <h3 style="color:DodgerBlue">Chọn mã lỗi</h3>
+            <hr />
+            <div class="mb-2">
+                <input class="form-control"
+                       style="width: 200px; display: inline"
+                       type="text"
+                       oninput="return false" />
+                <button class="btn btn-info" style="display: inline">
+                    <i class="fas fa-search"></i> Tìm kiếm
+                </button>
+            </div>
+            <table class="table table-bordered table-hover bg-light">
+                <thead>
+                    <tr class="table-active">
+                        <th style="width: 30%">Mã lỗi</th>
+                        <th style="width: 70%">Tên lỗi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01</td>
+                        <td>Lỏng RAM</td>
+                    </tr>
+                    <tr>
+                        <td>02</td>
+                        <td>Đứt dây mạng</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section>
+            <h5 style="color:DodgerBlue">Ảnh sau khi sửa</h5>
+            <div class="px-1 px-md-5 mt-3 mt-md-5" id="after_repair_img">
+                <div class="bg-light img-area d-flex flex-column">
+                    <div class="img-preview d-flex flex-column">
+                        <div class="img-page d-flex justify-content-center">
+                            <span id="current_page"></span>/<span id="max_page"></span>
+                        </div>
+                        <div class="img-carousel row p-0 m-0">
+                            <div class="prev-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-left text-center w-100"></i></div>
+                            <div class="current-img col-10 h-100">
+                                <img src="~/uploads/caller/defect/after-repair.jpg" />
+                                <div class="delete-img px-2"><i class="fa-solid fa-xmark"></i></div>
+                            </div>
+                            <div class="next-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-right text-center w-100"></i></div>
+                        </div>
+                    </div>
+                    <div class="img-input d-flex justify-content-center align-items-center">
+                        <input type="file" style="display:none" accept="image/*" id="defect_img" />
+                        <span class="w-75 text-center">
+                            <button class="input-option bg-light">Chọn</button> hoặc <button class="input-option bg-light">Chụp</button> ảnh lỗi
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="d-flex justify-content-center" id="button_finalize">
+        <button class="btn btn-info px-5" data-bs-toggle="modal" data-bs-target="#finalize_modal" style="font-size:3rem">
+            Kết thúc
+        </button>
+        <div class="modal fade"
+             id="finalize_modal"
+             tabindex="-1"
+             role="dialog"
+             aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title"
+                            id="exampleModalLabel"
+                            style="font-weight: 700">
+                            Kết thúc hỗ trợ
+                        </h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex flex-column justify-content-center">
+                        <h3 class="text-center">Quét mã QR để xác nhận kết thúc</h3>
+                        <img src="~/uploads/qr-code.png" />
+                        @* <video id="login_qrcode" autoplay></video> *@
+                        <canvas id="canvas" style="display:none"></canvas>
+                        <div class="text-center my-1">Hoặc</div>
+                        <label class="btn btn-outline-secondary">
+                            Chọn ảnh
+                            <input type="file" accept="image/*" name="qr-code" style="display:none" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/convert-img-to-blob.js"></script>
+<script src="~/js/Repair/ajax-call.js"></script>
+<script src="~/js/Repair/details.js"></script>
