@@ -2,7 +2,7 @@
     font-size: 24px !important;
     text-decoration: underline black;
     border: none;
-    padding: 10px;
+    padding: 8px;
 }
 
     .input-option:hover {
@@ -11,18 +11,24 @@
 
 .img-area {
     border: 3px dashed black;
-    height: 500px;
-    max-height: 600px;
+    min-height: 500px;
+    max-height: 800px;
     border-radius: 1rem;
+}
+@media (max-width: 768px) {
+    .img-area {
+        min-height: 350px;
+        max-height: 500px;
+    }
 }
 @media (max-width: 360px) {
     .img-area {
-        height: 250px;
+        min-height: 200px;
+        max-height: 350px;
     }
 }
 .img-preview {
     flex-grow: 9;
-    max-height: 85%;
 }
 
 .img-carousel {
@@ -39,6 +45,7 @@
 
 .prev-img,
 .next-img {
+    height: 250px;
     font-size: 36px;
     cursor: pointer;
 }
@@ -46,12 +53,14 @@
 @media (max-width: 576px) {
     .prev-img,
     .next-img {
+        height: 200px;
         font-size: 12px;
     }
 }
 @media (max-width: 360px) {
     .prev-img,
     .next-img {
+        height: 150px;
         font-size: 10px;
         padding: 2px;
     }
@@ -62,16 +71,23 @@
 
     .current-img img {
         display: none;
-        height: 420px;
-        width: 550px;
         max-width: 100%;
-        max-height: 100%;
+        max-height: 700px;
     }
 
         .current-img img.active {
             display: block;
         }
-
+@media (max-width: 768px) {
+    .current-img img {
+        max-height: 400px;
+    }
+}
+@media (max-width: 360px) {
+    .current-img img {
+        max-height: 230px;
+    }
+}
 .delete-img {
     position: absolute;
     top: -10px;
@@ -80,24 +96,23 @@
     color: red;
     font-size: 30px;
 }
-.table-header th {
+.table-header th .th-info{
     color: #495057;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 300px;
+    word-wrap: break-word;
+    max-width: 200px;
 }
     .table-header th:hover {
         background-color: #e9ecef;
     }
 .th-left{
-    max-width:35%;
+    width:35%;
     overflow:hidden;
     text-overflow: ellipsis;
-    width: auto;
 }
 .th-right {
-    min-width: 65%;
-    width: auto;
+    width: 65%;
 }
 @media (max-width: 360px) {
     .th-left {

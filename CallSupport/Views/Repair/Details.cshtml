@@ -7,42 +7,59 @@
         </colgroup>
         <thead class="table-header">
             <tr>
-                <th class="align-middle"><span style="color:DodgerBlue">Vị trí: </span>Cột B1</th>
+                <th class="align-middle">
+                    <div class="th-info">
+                        <span style="color:DodgerBlue">Vị trí: </span>Cột B1
+                    </div>
+                </th>
                 <th rowspan="4" class="align-middle">
                     <h5 style="color:DodgerBlue">Dụng cụ</h5>
                     <div id="caller_tools">
-                        <div class="bg-light img-area d-flex flex-column" style="height:250px">
+                        <div class="bg-light img-area d-flex flex-column">
                             <div class="img-preview d-flex flex-column">
                                 <div class="img-page d-flex justify-content-center">
-                                    <span id="current_page"></span>/<span id="max_page"></span>
+                                    <span class="current-page"></span>/<span class="max-page"></span>
                                 </div>
-                                <div class="img-carousel row p-0 m-0">
-                                    <div class="prev-img col-1 h-100 d-flex align-items-center" style="font-size:10px">
+                                <div class="img-carousel row p-0 m-0  flex-grow-1 align-items-center">
+                                    <div class="prev-img col-1 p-0 m-0 d-flex align-items-center" style="font-size:10px">
                                         <i class="fa-solid fa-angle-left text-center w-100"></i>
                                     </div>
                                     <div class="current-img col-10 h-100 d-flex justify-content-center">
                                         @* <div class="delete-img px-2"><i class="fa-solid fa-xmark"></i></div> *@
-                                        <img src="~/uploads/Tools/cable.png" style="width:220px" />
-                                        <img src="~/uploads/Tools/dvd.png" style="width:220px" />
-                                        <img src="~/uploads/Tools/hard-drive.png" style="width:220px" />
+                                        <img src="~/uploads/Tools/cable.png" />
+                                        <img src="~/uploads/Tools/dvd.png" />
+                                        <img src="~/uploads/Tools/hard-drive.png" />
                                     </div>
-                                    <div class="next-img col-1 h-100 d-flex align-items-center" style="font-size:10px">
+                                    <div class="next-img col-1 p-0 m-0 d-flex align-items-center" style="font-size:10px">
                                         <i class="fa-solid fa-angle-right text-center w-100"></i>
                                     </div>
                                 </div>
                             </div>
+                            <div class="tools-name flex-grow-1 d-flex align-items-center justify-content-center"><span>Tên công cụ</span></div>
                         </div>
                     </div>
                 </th>
             </tr>
             <tr>
-                <th class="align-middle"><span style="color:DodgerBlue">Dây chuyền: </span>PILOT L1</th>
+                <th class="align-middle">
+                    <div class="th-info">
+                        <span style="color:DodgerBlue">Dây chuyền: </span>PILOT L1
+                    </div>
+                </th>
             </tr>
             <tr>
-                <th class="align-middle"><span style="color:DodgerBlue">Công đoạn: </span>Bàn lắp ráp</th>
+                <th class="align-middle">
+                    <div class="th-info">
+                        <span style="color:DodgerBlue">Công đoạn: </span>Bàn lắp ráp
+                    </div>
+                </th>
             </tr>
             <tr>
-                <th class="align-middle"><span style="color:DodgerBlue">Lỗi: </span>Buộc dây không đúng</th>
+                <th class="align-middle">
+                    <div class="th-info">
+                        <span style="color:DodgerBlue">Lỗi: </span>Buộc dây không đúng
+                    </div>
+                </th>
             </tr>
         </thead>
 
@@ -54,15 +71,15 @@
                         <div class="bg-light img-area d-flex flex-column">
                             <div class="img-preview d-flex flex-column">
                                 <div class="img-page d-flex justify-content-center">
-                                    <span id="current_page"></span>/<span id="max_page"></span>
+                                    <span class="current-page"></span>/<span class="max-page"></span>
                                 </div>
-                                <div class="img-carousel row p-0 m-0">
-                                    <div class="prev-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-left text-center w-100"></i></div>
-                                    <div class="current-img col-10 h-100">
+                                <div class="img-carousel row p-0 m-0 flex-grow-1 align-items-center">
+                                    <div class="prev-img col-1 p-0 m-0 d-flex align-items-center"><i class="fa-solid fa-angle-left text-center w-100"></i></div>
+                                    <div class="current-img col-10 h-100 d-flex justify-content-center">
                                         <img src="~/uploads/caller/defect/dummy-defect.jpg" />
                                         @* <div class="delete-img px-2"><i class="fa-solid fa-xmark"></i></div> *@
                                     </div>
-                                    <div class="next-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-right text-center w-100"></i></div>
+                                    <div class="next-img col-1 p-0 m-0 d-flex align-items-center"><i class="fa-solid fa-angle-right text-center w-100"></i></div>
                                 </div>
                             </div>
                         </div>
@@ -87,19 +104,19 @@
                 <div class="bg-light img-area d-flex flex-column">
                     <div class="img-preview d-flex flex-column">
                         <div class="img-page d-flex justify-content-center">
-                            <span id="current_page"></span>/<span id="max_page"></span>
+                            <span class="current-page"></span>/<span class="max-page"></span>
                         </div>
-                        <div class="img-carousel row p-0 m-0">
-                            <div class="prev-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-left text-center w-100"></i></div>
-                            <div class="current-img col-10 h-100">
+                        <div class="img-carousel row p-0 m-0 flex-grow-1 align-items-center">
+                            <div class="prev-img col-1 p-0 m-0 d-flex align-items-center"><i class="fa-solid fa-angle-left text-center w-100"></i></div>
+                            <div class="current-img col-10 h-100 d-flex justify-content-center">
                                 <img src="~/uploads/caller/defect/before-repair.jpg" />
                                 <div class="delete-img px-2"><i class="fa-solid fa-xmark"></i></div>
                             </div>
-                            <div class="next-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-right text-center w-100"></i></div>
+                            <div class="next-img col-1 p-0 m-0 d-flex align-items-center"><i class="fa-solid fa-angle-right text-center w-100"></i></div>
                         </div>
                     </div>
                     <div class="img-input d-flex justify-content-center align-items-center">
-                        <input type="file" style="display:none" accept="image/*" id="defect_img" />
+                        <input type="file" style="display:none" accept="image/*" id="before_repair_img" class="img-input" />
                         <span class="w-75 text-center">
                             <button class="input-option bg-light">Chọn</button> hoặc <button class="input-option bg-light">Chụp</button> ảnh lỗi
                         </span>
@@ -180,19 +197,19 @@
                 <div class="bg-light img-area d-flex flex-column">
                     <div class="img-preview d-flex flex-column">
                         <div class="img-page d-flex justify-content-center">
-                            <span id="current_page"></span>/<span id="max_page"></span>
+                            <span class="current-page"></span>/<span class="max-page"></span>
                         </div>
-                        <div class="img-carousel row p-0 m-0">
-                            <div class="prev-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-left text-center w-100"></i></div>
-                            <div class="current-img col-10 h-100">
+                        <div class="img-carousel row p-0 m-0 flex-grow-1 align-items-center">
+                            <div class="prev-img col-1 p-0 m-0 d-flex align-items-center"><i class="fa-solid fa-angle-left text-center w-100"></i></div>
+                            <div class="current-img col-10 h-100 d-flex justify-content-center">
                                 <img src="~/uploads/caller/defect/after-repair.jpg" />
                                 <div class="delete-img px-2"><i class="fa-solid fa-xmark"></i></div>
                             </div>
-                            <div class="next-img col-1 h-100 d-flex align-items-center"><i class="fa-solid fa-angle-right text-center w-100"></i></div>
+                            <div class="next-img col-1 p-0 m-0 d-flex align-items-center"><i class="fa-solid fa-angle-right text-center w-100"></i></div>
                         </div>
                     </div>
                     <div class="img-input d-flex justify-content-center align-items-center">
-                        <input type="file" style="display:none" accept="image/*" id="defect_img" />
+                        <input type="file" style="display:none" accept="image/*" id="after_repair_img" class="img-input" />
                         <span class="w-75 text-center">
                             <button class="input-option bg-light">Chọn</button> hoặc <button class="input-option bg-light">Chụp</button> ảnh lỗi
                         </span>

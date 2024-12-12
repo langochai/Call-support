@@ -93,19 +93,24 @@ $(() => {
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
 
                 if (code?.data && !currentRequest) {
-                    console.log(code?.data)
                     $.post({
                         url: `/Login/QRcodeLogin`,
                         data: JSON.stringify(code.data.substring(1, code.data.length - 1)),
                         contentType: 'application/json',
                         success: () => {
-                            //window.location.href = "/";
+                            iziToast.success({
+                                title: 'Thông báo',
+                                message: 'Xác thực thành công',
+                                displayMode: 'once',
+                                position: 'topRight'
+                            })
+                            window.location.href = "/";
                         },
                         error: err => {
                             console.error(err)
                             iziToast.warning({
                                 title: 'Thông báo',
-                                message: 'Xác nhận không thành công',
+                                message: 'Xác thực không thành công',
                                 displayMode: 'once',
                                 position: 'topRight'
                             })
@@ -115,8 +120,8 @@ $(() => {
             }
             requestAnimationFrame(scanQRCode);
         }
-        //startVideo();
-        //scanQRCode();
+        startVideo();
+        scanQRCode();
         $('label.btn-outline-secondary input').off('change').on('change', function (e) {
             const file = e.target?.files[0];
             if (!file) return;
@@ -137,6 +142,12 @@ $(() => {
                             data: JSON.stringify(code.data.substring(1, code.data.length - 1)),
                             contentType: 'application/json',
                             success: () => {
+                                iziToast.success({
+                                    title: 'Thông báo',
+                                    message: 'Xác thực thành công',
+                                    displayMode: 'once',
+                                    position: 'topRight'
+                                })
                                 window.location.href = "/";
                             },
                             error: err => {
