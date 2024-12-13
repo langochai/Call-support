@@ -40,7 +40,7 @@ namespace CallSupport.Repositories
         /// Insert an item
         /// </summary>
         /// <param name="item">Item to be inserted</param>
-        /// <returns>ID of inserted item</returns>
+        /// <returns>ID of inserted item if exists. Otherwise return -1</returns>
         public int Create(T item)
         {
             table.Add(item);
@@ -48,7 +48,7 @@ namespace CallSupport.Repositories
             var idProperty = item.GetType().GetProperty("Id");
             if (idProperty != null)
             {
-                return (int)idProperty.GetValue(item);
+                return Convert.ToInt32(idProperty.GetValue(item));
             }
             return -1;
         }
@@ -56,7 +56,7 @@ namespace CallSupport.Repositories
         /// Update an item
         /// </summary>
         /// <param name="item">Item to be updated</param>
-        /// <returns>ID of updated item</returns>
+        /// <returns>ID of updated item if exists. Otherwise return -1</returns>
         public int Update(T item)
         {
             table.Attach(item);
@@ -65,7 +65,7 @@ namespace CallSupport.Repositories
             var idProperty = item.GetType().GetProperty("Id");
             if (idProperty != null)
             {
-                return (int)idProperty.GetValue(item);
+                return Convert.ToInt32(idProperty.GetValue(item));
             }
             return -1;
         }

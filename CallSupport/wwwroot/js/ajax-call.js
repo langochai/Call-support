@@ -1,4 +1,10 @@
-﻿function getPositions(search = '', offset = 0) {
+﻿/**
+ * Get lists of positions
+ * @param {string} search String to search upon
+ * @param {number} offset Number of offset
+ * @returns {object[]}
+ */
+function getPositions(search = '', offset = 0) {
     return new Promise(resolve => {
         $.get({
             url: `/Positions?offset=${+offset}&` + (search ? `search=${search}` : ''),
@@ -16,6 +22,12 @@
         })
     })
 }
+/**
+ * Get lists of Lines
+ * @param {string} search String to search upon
+ * @param {number} offset Number of offset
+ * @returns {object[]}
+ */
 function getLines(search = '', offset = 0) {
     return new Promise(resolve => {
         $.get({
@@ -34,6 +46,12 @@ function getLines(search = '', offset = 0) {
         })
     })
 }
+/**
+ * Get lists of sections
+ * @param {string} search String to search upon
+ * @param {number} offset Number of offset
+ * @returns {object[]}
+ */
 function getSections(search = '', offset = 0) {
     return new Promise(resolve => {
         $.get({
@@ -52,6 +70,12 @@ function getSections(search = '', offset = 0) {
         })
     })
 }
+/**
+ * Get lists of departments
+ * @param {string} search String to search upon
+ * @param {number} offset Number of offset
+ * @returns {object[]}
+ */
 function getDepartments(search = '', offset = 0) {
     return new Promise(resolve => {
         $.get({
@@ -70,6 +94,12 @@ function getDepartments(search = '', offset = 0) {
         })
     })
 }
+/**
+ * Get lists of basic defects
+ * @param {string} search String to search upon
+ * @param {number} offset Number of offset
+ * @returns {object[]}
+ */
 function getDefects(search = '', offset = 0) {
     return new Promise(resolve => {
         $.get({
@@ -88,6 +118,11 @@ function getDefects(search = '', offset = 0) {
         })
     })
 }
+/**
+ * Get lists of tools
+ * @param {string} search String to search upon
+ * @returns {object[]}
+ */
 function getTools(search = '') {
     return new Promise(resolve => {
         $.get({
@@ -106,6 +141,12 @@ function getTools(search = '') {
         })
     })
 }
+/**
+ * Create a call using caller permission
+ * @param {object} data Plain old data from previos app
+ * @param {object} extra Extra information from this new app
+ * @returns {object} The inserted call
+ */
 function createCall(data, extra = {}) {
     return new Promise(resolve => {
         $.post({

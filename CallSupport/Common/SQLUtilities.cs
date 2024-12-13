@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace CallSupport.Common
 {
-    public static class TextUtils
+    public static class SQLUtilities
     {
         private static readonly IDictionary<Type, ICollection<PropertyInfo>> _Properties = new Dictionary<Type, ICollection<PropertyInfo>>();
 

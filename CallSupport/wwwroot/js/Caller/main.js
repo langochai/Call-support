@@ -7,7 +7,7 @@
     createCarousel()
     displayTools()
     $('#tools').on('input', displayTools)
-    $('#tools-display').on('click', '.tools-options', function () {$(this).toggleClass('picked-tool')} )
+    $('#tools-display').on('click', '.tools-options', function () { $(this).toggleClass('picked-tool') })
     insertImageButton()
     pickOptionOnTable()
     $('.footer .btn').on('click', submitData)
@@ -147,27 +147,44 @@ function validateData() {
     }).length > 0
     let hasImg = $('.current-img img').length > 0
     if (!hasSelected) {
-        iziToast.warning({ title: 'Thông báo', message: 'Vui lòng điền đủ thông tin', displayMode: 1, position: 'topRight' })
+        iziToast.warning({ title: 'Thông báo', message: 'Vui lòng điền đủ thông tin', displayMode: 'replace', position: 'topRight' })
         isVeryVeryOK = false
     }
     if (!hasImg) {
-        iziToast.warning({ title: 'Thông báo', message: 'Vui lòng chụp ảnh lỗi', displayMode: 1, position: 'topRight' })
+        iziToast.warning({ title: 'Thông báo', message: 'Vui lòng chụp ảnh lỗi', displayMode: 'replace', position: 'topRight' })
         isVeryVeryOK = false
     }
     return isVeryVeryOK
 }
 async function submitData() {
-    if (!validateData()) return
-    const data =
-    {
-        CallerC : $('#UserName').val(),
-        DepC : $('#Department').val(),
-        LineC : $('#lines').parent().next().find('tbody tr[class="active-row"] td:first').text(),
-        SecC : $('#sections').parent().next().find('tbody tr[class="active-row"] td:first').text(),
-        PosC : $('#positions').parent().next().find('tbody tr[class="active-row"] td:first').text(),
-        ToDepC : $('#departments').parent().next().find('tbody tr[class="active-row"] td:first').text(),
-        ErrC : $('#defects').parent().next().find('tbody tr[class="active-row"] td:first').text(),
-        StatusLine : $('.footer .btn').index(this).toString(),
+    if (!validateData()) return;
+    try {
+        const Tools = $('#tools-display').find('.picked-tool').map(function () {
+            return $(this).data('tool-id')
+        }).get()
+        const Images = await Promise.all(
+            $('.current-img img').map(async function () {
+                return await convertIMG(this, `/Images/Defect`)
+            }).get()
+        )
+        const Note = $('textarea').val()
+        const data =
+        {
+            CallerC: $('#UserName').val(),
+            DepC: $('#Department').val(),
+            LineC: $('#lines').parent().next().find('tbody tr[class="active-row"] td:first').text(),
+            SecC: $('#sections').parent().next().find('tbody tr[class="active-row"] td:first').text(),
+            PosC: $('#positions').parent().next().find('tbody tr[class="active-row"] td:first').text(),
+            ToDepC: $('#departments').parent().next().find('tbody tr[class="active-row"] td:first').text(),
+            ErrC: $('#defects').parent().next().find('tbody tr[class="active-row"] td:first').text(),
+            StatusLine: $('.footer .btn').index(this).toString(),
+        }
+        const result = await createCall(data, { Tools, Images, Note })
+        if (result) {
+            iziToast.success({ title: "Thông báo", message: "Gọi hỗ trợ thành công", displayMode: 'once', position: 'topRight' })
+        }
     }
-    await createCall(data)
+    catch (e) {
+        iziToast.error({ title: "Lỗi", message: "Thao tác không thành công", position: 'topRight', displayMode: 'replace' })
+    }
 }
