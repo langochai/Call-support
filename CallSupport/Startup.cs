@@ -35,7 +35,7 @@ namespace CallSupport
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation(); ;
             services.AddSignalR();
-
+            services.AddSingleton<SqlDependencyService>();
             //Session
             services.AddSession(cfg =>
             {
@@ -158,6 +158,7 @@ namespace CallSupport
                    pattern: "{controller=Home}/{action=Index}/");
                 endpoints.MapHub<NotificationHub>("/notificationHub");
             });
+            app.ApplicationServices.GetService<SqlDependencyService>();
             //app.UseStatusCodePagesWithRedirects("/Home/Error");
         }
     }

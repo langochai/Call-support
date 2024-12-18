@@ -20,6 +20,7 @@
     <script src="~/assets/bundles/scroll-table/scroll-table.js"></script>
     <script src="~/assets/bundles/qrcode/qrcode.min.js"></script>
     <script src="~/assets/bundles/jsqr/jsqr.js"></script>
+    <script src="~/assets/bundles/signalr/dist/browser/signalr.min.js"></script>
     <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body>
@@ -104,14 +105,7 @@
                     </a>
                 </li>
                 <li class="my-3 py-2">
-                    @if (Convert.ToBoolean(ViewBag.User?.IsCaller) && ViewBag.SwitchURL == "/Repair")
-                    {
-                        <a href="/Call/History"><i class="fa-solid fa-list"></i> Lịch sử</a>
-                    }
-                    else
-                    {
-                        <a href="/Call/History"><i class="fa-solid fa-list"></i> Lịch sử</a>
-                    }
+                    <a href="/History"><i class="fa-solid fa-list"></i> Lịch sử</a>
                 </li>
             </ul>
         </nav>

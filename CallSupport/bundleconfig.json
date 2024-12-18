@@ -10,5 +10,11 @@
     "inputFiles": [
       "wwwroot/assets/bundles/font-awesome/fontawesome.css"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/assets/bundles/enhanced-bootstrap-select/dist/locale/vn-VN.min.js",
+    "inputFiles": [
+      "wwwroot/assets/bundles/enhanced-bootstrap-select/dist/locale/vn-VN.js"
+    ]
   }
 ]

@@ -46,6 +46,24 @@ function getLines(search = '', offset = 0) {
         })
     })
 }
+function getAllLines() {
+    return new Promise(resolve => {
+        $.get({
+            url: `/Lines/All`,
+            success: data => resolve(data),
+            error: err => {
+                console.error(err)
+                iziToast.error({
+                    title: 'Lỗi',
+                    message: 'Load dữ liệu dây chuyền thất bại',
+                    displayMode: 1,
+                    position: 'topRight'
+                });
+                resolve()
+            }
+        })
+    })
+}
 /**
  * Get lists of sections
  * @param {string} search String to search upon
@@ -80,6 +98,24 @@ function getDepartments(search = '', offset = 0) {
     return new Promise(resolve => {
         $.get({
             url: `/Departments?offset=${+offset}&` + (search ? `search=${search}` : ''),
+            success: data => resolve(data),
+            error: err => {
+                console.error(err)
+                iziToast.error({
+                    title: 'Lỗi',
+                    message: 'Load dữ liệu bộ phận thất bại',
+                    displayMode: 1,
+                    position: 'topRight'
+                });
+                resolve()
+            }
+        })
+    })
+}
+function getAllDepartments() {
+    return new Promise(resolve => {
+        $.get({
+            url: `/Departments/All`,
             success: data => resolve(data),
             error: err => {
                 console.error(err)
@@ -158,6 +194,26 @@ function createCall(data, extra = {}) {
                 iziToast.error({
                     title: 'Lỗi',
                     message: err.status == 409 ? err.responseText :'Tạo cuộc gọi thất bại',
+                    displayMode: 1,
+                    position: 'topRight'
+                });
+                resolve()
+            }
+        })
+    })
+}
+function getHistory(fromDate, toDate, fromDep, toDep, lines, offset = '', limit = '') {
+    if (fromDep == 'all') fromDep = ''
+    if (toDep == 'all') toDep = ''
+    return new Promise(resolve => {
+        $.get({
+            url: `/History/Data?fromDate=${fromDate}&toDate=${toDate}&fromDep=${fromDep}&toDep=${toDep}&lines=${lines?.join(',')}`,
+            success: result => resolve(result),
+            error: err => {
+                console.error(err)
+                iziToast.error({
+                    title: 'Lỗi',
+                    message: 'Load dữ liệu lịch sử thất bại',
                     displayMode: 1,
                     position: 'topRight'
                 });

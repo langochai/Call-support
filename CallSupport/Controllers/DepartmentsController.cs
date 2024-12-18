@@ -16,5 +16,13 @@ namespace CallSupport.Controllers
                 offset, limit, d => d.Sort);
             return Json(departments, new System.Text.Json.JsonSerializerOptions());
         }
+        [HttpGet]
+        [Route("/Departments/All")]
+        public IActionResult GetAll()
+        {
+            var departmentRepo = new DepartmentRepo();
+            var departments = departmentRepo.GetAll();
+            return Json(departments, new System.Text.Json.JsonSerializerOptions());
+        }
     }
 }

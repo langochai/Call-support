@@ -1,0 +1,21 @@
+﻿.label-header{
+    color: dodgerblue;
+}
+.status-showcase {
+    font-size:18px;
+    font-weight:bold;
+    color: white;
+}
+    .status-showcase.red {
+        background: orangered;
+    }
+    .status-showcase.yellow {
+        background: yellow;
+        color: black;
+    }
+    .status-showcase.green {
+        background: limegreen;
+    }
+input[type="date"] {
+    border: 1px solid #6c757d
+}

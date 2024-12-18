@@ -9,7 +9,7 @@
                 settings.isLoading = true;
                 const data = await options.fetchData(rowCount);
                 data.forEach(d => {
-                    const row = $(`<tr></tr>`);
+                    const row = $(`<tr class="${d.rowClass ?? ''}"></tr>`);
                     options.columns.forEach(c => {
                         row.append($(`<td>${d[c]}</td>`));
                     });

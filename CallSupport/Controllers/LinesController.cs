@@ -14,5 +14,13 @@ namespace CallSupport.Controllers
             var lines = lineRepo.Find(l => l.LineC.Contains(search) || l.LineNm.Contains(search), offset, limit, l => l.Sort);
             return Json(lines, new System.Text.Json.JsonSerializerOptions());
         }
+        [HttpGet]
+        [Route("/Lines/All")]
+        public IActionResult GetAll()
+        {
+            var lineRepo = new LineRepo();
+            var lines = lineRepo.GetAll();
+            return Json(lines, new System.Text.Json.JsonSerializerOptions());
+        }
     }
 }
