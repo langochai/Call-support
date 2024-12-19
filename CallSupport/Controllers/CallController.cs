@@ -5,6 +5,8 @@ using CallSupport.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
+using System.Linq;
 
 namespace CallSupport.Controllers
 {
@@ -58,7 +60,7 @@ namespace CallSupport.Controllers
                     LineC = insertData.LineC,
                     SecC = insertData.SecC,
                     PosC = insertData.PosC,
-                    Tools = String.Join(',', extra.Tools),
+                    Tools = String.Join(',', extra.Tools ?? Enumerable.Empty<int>()),
                     DefectNote = extra.Note,
                     DefectImg = String.Join(',', extra.Images),
                 };

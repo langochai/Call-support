@@ -9,15 +9,7 @@ namespace CallSupport.Controllers
     {
         public IActionResult Index()
         {
-            var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
-            if (user.UserName == null)
-            {
-                return RedirectToAction("Index", "Login", null);
-            }
-            ViewBag.User = user;
-            ViewBag.Switchable = user.IsCaller;
-            ViewBag.SwitchURL = "/Call";
-            return View();
+            return RedirectToAction("Index", "History", new { actionType = "Repair" });
         }
         public IActionResult Details(DateTime time, string line, string section, string position)
         {

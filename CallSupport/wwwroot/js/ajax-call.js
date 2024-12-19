@@ -222,3 +222,21 @@ function getHistory(fromDate, toDate, fromDep, toDep, lines, offset = '', limit 
         })
     })
 }
+function getHistoryDetails(callingTime, line, section, position) {
+    return new Promise(resolve => {
+        $.get({
+            url: `/History/Details?callingTime=${callingTime}&line=${line}&section=${section}&position=${position}`,
+            success: result => resolve(result),
+            error: err => {
+                console.error(err)
+                iziToast.error({
+                    title: 'Lỗi',
+                    message: 'Load dữ liệu lịch sử thất bại',
+                    displayMode: 1,
+                    position: 'topRight'
+                });
+                resolve()
+            }
+        })
+    })
+}

@@ -1,5 +1,6 @@
 ﻿using CallSupport.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CallSupport.Controllers
 {
@@ -10,7 +11,7 @@ namespace CallSupport.Controllers
         public IActionResult Get(string search)
         {
             var toolsRepo = new ToolsRepo();
-            var tools = toolsRepo.Find(t => t.ToolNm == search || string.IsNullOrEmpty(search));
+            var tools = toolsRepo.Find(t => EF.Functions.Like(t.ToolNm, $"%{search}%"));
             return Json(tools, new System.Text.Json.JsonSerializerOptions());
         }
     }

@@ -19,3 +19,18 @@
 input[type="date"] {
     border: 1px solid #6c757d
 }
+tbody tr td{
+    font-weight: bold;
+    transition: background-color 1s ease, color 1s ease;
+}
+    tbody tr.waiting td {
+        background-color: orangered;
+        color: white;
+    }
+    tbody tr.repairing td {
+        background-color: yellow;
+    }
+    tbody tr.finished td {
+        background-color: limegreen;
+        color: white;
+    }

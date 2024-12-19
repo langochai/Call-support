@@ -20,7 +20,7 @@ namespace CallSupport.Controllers
             }
             if (user.IsRepair)
             {
-                return RedirectToAction("Index", "Support", null);
+                return RedirectToAction("Index", "Repair", new { actionType = "Repair" });
             }
             if (user.IsMaster)
             {

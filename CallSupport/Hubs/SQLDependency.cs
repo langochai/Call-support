@@ -36,8 +36,8 @@ namespace CallSupport.Hubs
                 var result = new
                 {
                     NotificationType = e.NotificationType.ToString(),
-                    Inserted = inserted.ToString().Replace("<inserted>","").Replace("</inserted>", ""),
-                    Deleted = deleted.ToString().Replace("<deleted>", "").Replace("</deleted>", ""),
+                    Inserted = inserted?.ToString().Replace("<inserted>","").Replace("</inserted>", ""),
+                    Deleted = deleted?.ToString().Replace("<deleted>", "").Replace("</deleted>", ""),
                 };
                 string resultJson = JsonSerializer.Serialize(result, options);
                 _hubContext.Clients.All.SendAsync("RefreshHistory", resultJson).Wait();

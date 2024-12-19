@@ -6,7 +6,7 @@
     loadData('#defects', getDefects, ['Maloi', 'Tenloi'])
     createCarousel()
     displayTools()
-    $('#tools').on('input', displayTools)
+    $('#tools').searchInput(displayTools, 200) // fn.searchInput(callback, timeout = 350)
     $('#tools-display').on('click', '.tools-options', function () { $(this).toggleClass('picked-tool') })
     insertImageButton()
     pickOptionOnTable()
@@ -108,22 +108,30 @@ function createCarousel() {
     });
 }
 async function displayTools() {
-    const search = $('#tools').val()?.trim()
-    $('#tools-display').empty()
-    const data = await getTools(search)
-    if (!data.length) return;
-    data.forEach(d => {
-        const $tool = $(
-            `<div class="col-6 col-md-3 col-lg-2 border bg-light tools-options" style="height:160px">
+    try {
+        const search = $('#tools').val()?.trim();
+        const data = await getTools(search);
+        const $display = $('#tools-display')
+        $display.find('.tools-options').not('.picked-tool').remove()
+        let pickedToolIds = $display.find('.tools-options.picked-tool').map(function () { return $(this).data('tool-id'); }).get();
+        data
+            .filter(d => !pickedToolIds.includes(d.Id))
+            .forEach(d => {
+            const $tool = $(
+                `<div class="col-6 col-md-3 col-lg-2 border bg-light tools-options" >
                 <div class="border my-1 mx-auto" style="width:80%;height:60%">
                     <img class="w-100 h-100" src="${d.Img}" />
                 </div>
                 <div class="mx-auto mt-3 text-center">${d.ToolNm}</div>
             </div>`
-        )
-        $tool.data('tool-id', d.Id)
-        $('#tools-display').append($tool)
-    })
+            )
+            $tool.data('tool-id', d.Id)
+            $display.append($tool)
+        })
+    }
+    catch (e) {
+        iziToast.error({ title: 'Lỗi', message: 'Load dữ liệu công cụ thất bại', position: 'topRight', displayMode: 'replace' })
+    }
 }
 function insertImageButton() {
     $('.img-input').on('click', '.input-option', function (e) {
@@ -142,9 +150,12 @@ function pickOptionOnTable() {
 }
 function validateData() {
     let isVeryVeryOK = true
-    let hasSelected = $('.table tbody tr').filter(function () {
-        return $(this).hasClass('active-row')
-    }).length > 0
+    let hasSelected = $('.table').map(function () {
+        return $(this).find('tbody tr').filter(function () {
+            return $(this).hasClass('active-row');
+        }).length > 0;
+    }).get().every(Boolean);
+
     let hasImg = $('.current-img img').length > 0
     if (!hasSelected) {
         iziToast.warning({ title: 'Thông báo', message: 'Vui lòng điền đủ thông tin', displayMode: 'replace', position: 'topRight' })
@@ -182,6 +193,7 @@ async function submitData() {
         const result = await createCall(data, { Tools, Images, Note })
         if (result) {
             iziToast.success({ title: "Thông báo", message: "Gọi hỗ trợ thành công", displayMode: 'once', position: 'topRight' })
+            //window.location.href = "/History/Call";
         }
     }
     catch (e) {

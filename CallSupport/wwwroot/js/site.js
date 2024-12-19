@@ -54,7 +54,7 @@ $('#save_login_qr').on('click', function () {
 })
 $('#backdrop').on('click', () => $('#toggle-side-bar').trigger('change'));
 (function ($) {
-    $.fn.searchInput = function (callback) {
+    $.fn.searchInput = function (callback, timeout = 350) {
         let typingTimer;
         let currentRequest;
         this.on('keyup.searchInput', function () {
@@ -62,7 +62,7 @@ $('#backdrop').on('click', () => $('#toggle-side-bar').trigger('change'));
             if (currentRequest) {
                 currentRequest.abort();
             }
-            typingTimer = setTimeout(doneTyping, 350, $(this));
+            typingTimer = setTimeout(doneTyping, timeout, $(this));
         });
         this.on('keydown.searchInput', function () {
             clearTimeout(typingTimer);
@@ -81,3 +81,19 @@ $('#backdrop').on('click', () => $('#toggle-side-bar').trigger('change'));
         return this;
     };
 }(jQuery));
+/**
+ * Convert to Vietnamese datetime
+ * @param {string} dateTimeStr Input string
+ * @returns {string} Datetime formated string
+ */
+function toVNDateTime(dateTimeStr) {
+    const date = new Date(dateTimeStr);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const year = date.getFullYear();
+
+    return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+}

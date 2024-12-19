@@ -21,7 +21,7 @@
 	background-color: skyblue !important;
 }
 #tools-container {
-	max-height: 350px;
+	height: 350px;
 	overflow-y: auto;
 }
 .picked-tool {
@@ -98,4 +98,8 @@
 	cursor: pointer;
 	color: red;
 	font-size: 30px;
+}
+.tools-options {
+	height: 160px;
+	cursor: pointer;
 }

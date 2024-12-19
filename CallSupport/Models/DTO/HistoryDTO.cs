@@ -10,5 +10,10 @@ namespace CallSupport.Models.DTO
         public string DefectImg { get; set; }
         public string BeforeRepairImg { get; set; }
         public string AfterRepairImg { get; set; }
+        public string LineNm { get; set; }
+        public string SecNm { get; set; }
+        public string PosNm { get; set; }
+        public string DepNm { get; set; }
+        public string Tenloi { get; set; }
     }
 }

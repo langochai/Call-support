@@ -4,6 +4,7 @@
     const IsCaller = $('#IsCaller').prop('checked');
     const connection = new signalR.HubConnectionBuilder()
         .withUrl(`/notificationHub?UserName=${UserName}&Department=${Department}&IsCaller=${IsCaller}`)
+        .withAutomaticReconnect()
         .build();
 
     connection.start().catch(err => console.error(err.toString()));
@@ -16,13 +17,13 @@
         const parser = new DOMParser();
         const insertXMLDoc = parser.parseFromString(data.Inserted, "text/xml");
         const deleteXMLDoc = parser.parseFromString(data.Deleted, "text/xml");
-        const inserted = xmlToObject(insertXMLDoc.documentElement);
-        const deleted = xmlToObject(deleteXMLDoc.documentElement);
+        const inserted = data.Inserted === null ? '' : xmlToObject(insertXMLDoc.documentElement);
+        const deleted = data.Deleted === null ? '' : xmlToObject(deleteXMLDoc.documentElement);
         refreshHistory?.(data.NotificationType, inserted, deleted)
     });
     connection.on("Error", (error) => {
         console.error(error)
-        iziToast.error({title: 'Lỗi', message: 'Kết nối dữ liệu thất bại', position: 'topRight', displayMode: 'once')
+        iziToast.error({ title: 'Lỗi', message: 'Kết nối dữ liệu thất bại', position: 'topRight', displayMode: 'once' })
     });
 })
 function xmlToObject(xml) {

@@ -7,3 +7,6 @@
     top: 0;
     z-index: 50;
 }
+.table-container tbody tr{
+    cursor: pointer;
+}
