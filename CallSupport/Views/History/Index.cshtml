@@ -1,4 +1,11 @@
-﻿<link href="~/css/history/styles.css" rel="stylesheet" />
+﻿@using Microsoft.AspNetCore.Http
+@using CallSupport.Common
+@using CallSupport.Models.DTO
+@addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    var IsCaller = Context.Session.GetObject<bool>("IsCaller");
+}
+<link href="~/css/history/styles.css" rel="stylesheet" />
 <div class="mb-2">
     <div class="accordion" id="setting">
         <div class="accordion-item">
@@ -86,7 +93,7 @@
                 <th class="text-center text-wrap text-break align-middle">Tên dây chuyền</th>
                 <th class="text-center text-wrap text-break align-middle">Công đoạn</th>
                 <th class="text-center text-wrap text-break align-middle">Vị trí</th>
-                <th class="text-center text-wrap text-break align-middle">Bộ phận</th>
+                <th class="text-center text-wrap text-break align-middle">Gọi bộ phận</th>
                 <th class="text-center text-wrap text-break align-middle">Lỗi</th>
                 <th class="text-center text-wrap text-break align-middle">TG gọi</th>
                 @* <th>TG chờ</th> *@
@@ -105,3 +112,25 @@
 <script src="~/js/ajax-call.js"></script>
 <script src="~/js/history/main.js"></script>
 <script src="~/js/notification.js"></script>
+@section SideBar {
+    <li class="my-3 py-2">
+        @if (IsCaller)
+        {
+            <a href="/Call"><i class="fa-solid fa-phone"></i> Gọi hỗ trợ</a>
+        }
+        else
+        {
+            <a href="/Repair"><span><i class="fa-solid fa-screwdriver-wrench"></i> Trả lời hỗ trợ</span></a>
+        }
+    </li>
+    <li class="my-3 py-2">
+        @if (IsCaller)
+        {
+            <a href="/History/Call"><i class="fa-solid fa-list"></i> Lịch sử</a>
+        }
+        else
+        {
+            <a href="/History/Repair"><i class="fa-solid fa-list"></i> Lịch sử</a>
+        }
+    </li>
+}

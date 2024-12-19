@@ -16,9 +16,6 @@ namespace CallSupport.Controllers
             var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
             if (String.IsNullOrEmpty(user.UserName)) return RedirectToAction("Index", "Login", null);
             if (actionType != "Call" && actionType != "Repair") return NotFound();
-            ViewBag.User = user;
-            ViewBag.Switchable = user.IsCaller ? user.IsRepair : user.IsCaller;
-            ViewBag.SwitchURL = actionType == "Call" ? "/Repair" : "/Call";
             return View();
         }
         [HttpGet]

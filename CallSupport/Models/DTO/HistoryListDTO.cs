@@ -25,7 +25,7 @@ namespace CallSupport.Models.DTO
         public string Cancel_c { get; set; }
         public string Dep_c_cancel { get; set; }
         public DateTime? UptDt { get; set; }
-        public string To_dep_c { get; set; }
+        public string ToDep_c { get; set; }
         public int? Stopline { get; set; }
         public int? AssyStop { get; set; }
         public string Ver { get; set; }
@@ -49,5 +49,6 @@ namespace CallSupport.Models.DTO
         public string Pos_nm { get; set; }
         public string Dep_nm { get; set; }
         public string tenloi { get; set; }
+        public string Rep_nm { get; set; }
     }
 }

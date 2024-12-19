@@ -4,6 +4,7 @@
     await loadDateInput();
     await loadHistoryData();
     $('.refresh-history').on('click', loadHistoryData)
+    displayPrettier()
 })
 async function loadLinecodes() {
     const linesData = await getAllLines()
@@ -87,26 +88,38 @@ function loadDateInput() {
     });
 }
 async function loadHistoryData() {
-    const fromDate = $('#from_date').val()
-    const toDate = $('#to_date').val()
-    const fromDep = $('#from_department').val()
-    const toDep = $('#to_department').val()
-    const lines = $('#lines').val()
-    const data = await getHistory(fromDate, toDate, fromDep, toDep, lines)
-    const tbody = $('tbody')
-    tbody.empty()
-    data.forEach(d => {
-        const row = $(`<tr class="${getRowClassName(d.Status_calling)}"></tr>`)
-        row.append($(`<td class="text-wrap text-break">${d.Line_c}</td>`))
-        row.append($(`<td class="text-wrap text-break">${d.Line_nm}</td>`))
-        row.append($(`<td class="text-wrap text-break">${d.Sec_nm}</td>`))
-        row.append($(`<td class="text-wrap text-break">${d.Pos_nm}</td>`))
-        row.append($(`<td class="text-wrap text-break">${d.Dep_c}</td>`))
-        row.append($(`<td class="text-wrap text-break">${d.tenloi}</td>`))
-        row.append($(`<td class="text-wrap text-break">${toVNDateTime(d.Calling_time)}</td>`))
-        row.data('data', d)
-        tbody.append(row)
-    })
+    try {
+        const fromDate = $('#from_date').val()
+        const toDate = $('#to_date').val()
+        const fromDep = $('#from_department').val()
+        const toDep = $('#to_department').val()
+        const lines = $('#lines').val()
+        iziToast.success({ title: "Loading...", message: "Đang tải dữ liệu", position: 'topRight', displayMode: 'once', timeout: 30000 })
+        const data = await getHistory(fromDate, toDate, fromDep, toDep, lines)
+        const tbody = $('tbody')
+        tbody.empty()
+        data.forEach(d => {
+            const row = $(`<tr class="${getRowClassName(d.Status_calling)}"></tr>`)
+            row.append($(`<td class="text-wrap text-break">${d.Line_c}</td>`))
+            row.append($(`<td class="text-wrap text-break">${d.Line_nm}</td>`))
+            row.append($(`<td class="text-wrap text-break">${d.Sec_nm}</td>`))
+            row.append($(`<td class="text-wrap text-break">${d.Pos_nm}</td>`))
+            row.append($(`<td class="text-wrap text-break">${d.ToDep_c}</td>`))
+            row.append($(`<td class="text-wrap text-break ${d.Status_line && ('line-stop')}">${d.tenloi}</td>`))
+            row.append($(`<td class="text-wrap text-break">${toVNDateTime(d.Calling_time)}</td>`))
+            row.data('data', d)
+            row.on('click', showCallDetails)
+            tbody.append(row)
+        })
+    }
+    catch (err) {
+        console.error(err)
+        iziToast.error({ title: "Lỗi", message: "Load dữ liệu thất bại", position: 'topRight', displayMode: 'once', timeout: 30000 })
+    }
+    finally {
+        var toast = document.querySelector('.iziToast');
+        iziToast.hide({}, toast);
+    }
 }
 /**
  * Use this function to check the data change from notification.js
@@ -126,10 +139,11 @@ async function refreshHistory(actionType, inserted, deleted) {
         row.append($(`<td class="text-wrap text-break">${data[0].Line_nm}</td>`))
         row.append($(`<td class="text-wrap text-break">${data[0].Sec_nm}</td>`))
         row.append($(`<td class="text-wrap text-break">${data[0].Pos_nm}</td>`))
-        row.append($(`<td class="text-wrap text-break">${data[0].Dep_c}</td>`))
-        row.append($(`<td class="text-wrap text-break">${data[0].tenloi}</td>`))
+        row.append($(`<td class="text-wrap text-break">${data[0].ToDep_c}</td>`))
+        row.append($(`<td class="text-wrap text-break ${data[0].Status_line && ('line-stop')}">${data[0].tenloi}</td>`))
         row.append($(`<td class="text-wrap text-break">${toVNDateTime(data[0].Calling_time)}</td>`))
         row.data('data', data[0])
+        row.on('click', showCallDetails)
         tbody.prepend(row)
     }
     if (actionType === 'Update') {
@@ -138,18 +152,20 @@ async function refreshHistory(actionType, inserted, deleted) {
         if (!data.length) return;
         const updateRow = tbody.find('tr').filter((i, r) => {
             const rowData = $(r).data('data')
-            return new Date(rowData.Calling_time).getTime() == new Date(inserted.Calling_time).getTime() && 
-                rowData.Line_c == inserted.Line_c && 
-                rowData.Sec_c == inserted.Sec_c && 
-                rowData.Pos_c == inserted.Pos_c 
+            return new Date(rowData.Calling_time).getTime() == new Date(inserted.Calling_time).getTime() &&
+                rowData.Line_c == inserted.Line_c &&
+                rowData.Sec_c == inserted.Sec_c &&
+                rowData.Pos_c == inserted.Pos_c
         }).eq(0)
         updateRow.attr('class', getRowClassName(data[0].Status_calling))
         updateRow.children('td:nth-child(1)').text(`${data[0].Line_c}`);
         updateRow.children('td:nth-child(2)').text(`${data[0].Line_nm}`);
         updateRow.children('td:nth-child(3)').text(`${data[0].Sec_nm}`);
         updateRow.children('td:nth-child(4)').text(`${data[0].Pos_nm}`);
-        updateRow.children('td:nth-child(5)').text(`${data[0].Dep_c}`);
-        updateRow.children('td:nth-child(6)').text(`${data[0].tenloi}`);
+        updateRow.children('td:nth-child(5)').text(`${data[0].ToDep_c}`);
+        updateRow.children('td:nth-child(6)').text(`${data[0].tenloi}`)
+            .removeClass('line-stop')
+            .addClass(data[0].Status_line ? 'line-stop' : '');
         updateRow.children('td:nth-child(7)').text(`${toVNDateTime(data[0].Calling_time)}`);
         updateRow.data('data', data[0])
     }
@@ -164,6 +180,61 @@ async function refreshHistory(actionType, inserted, deleted) {
         }).eq(0).remove()
     }
 }
+function showCallDetails() {
+    const $row = $(this)
+    $row.toggleClass('expand')
+    if ($row.hasClass('expand')) {
+        const data = $row.data('data')
+        const callTime = data.Calling_time != null ? toVNDateTime(data.Calling_time) : ''
+        const repairTime = data.Repairing_time != null ? toVNDateTime(data.Repairing_time) : ''
+        const confirmTime = data.Confirm_time != null ? toVNDateTime(data.Confirm_time) : ''
+        const $detailRow = $(`<tr></tr>`)
+        const $container = $(`<td class="p-3" colspan="7" style="display:none"></td>`)
+        const $table = $(
+            `<table class="table table-bordered table-hover table-call-details">
+                <tr>
+                    <td><span class="info-header">Mã chuyền</span>: ${data.Line_c}</td>
+                    <td><span class="info-header">Tên chuyền</span>: ${data.Line_nm}</td>
+                </tr>
+                <tr>
+                    <td><span class="info-header">Công đoạn</span>: ${data.Sec_nm}</td>
+                    <td><span class="info-header">Vị trí</span>: ${data.Pos_nm}</td>
+                </tr>
+                <tr>
+                    <td><span class="info-header">Bộ phận gọi</span>: ${data.Dep_c}</td>
+                    <td><span class="info-header">Bộ phận sửa</span>: ${data.ToDep_c}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="info-header">Loại lỗi</span>: ${data.tenloi}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="info-header">Loại lỗi</span>: ${data.tenloi}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="info-header">Người sửa</span>: ${data.Rep_nm ?? ''}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="info-header">TG Gọi</span>: ${callTime}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="info-header">TG Sửa</span>: ${repairTime}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="info-header">TG Xác nhận</span>: ${confirmTime}</td>
+                </tr>
+            </table>`
+        )
+
+        $container.append($table)
+        $detailRow.append($container)
+        $row.after($detailRow)
+        $container.slideDown('fast')
+    } else {
+        $row.next().find('td').slideUp('fast', function () {
+            $(this).closest('tr').remove()
+        })
+    }
+}
 function getRowClassName(statusCalling) {
     if (statusCalling == 0) return "waiting"
     if (statusCalling == 1) return "repairing"
@@ -175,5 +246,17 @@ function isWithinDateRange(dateString) {
     const toDate = new Date($('#to_date').val());
     fromDate.setHours(0, 0, 0, 0);
     toDate.setHours(23, 59, 59, 999);
-    return date >= fromDate && date <= toDate;
+    return date >= fromDate && date <= toDate; //remember to use .getTime() if you're not using >= or <=
+}
+function displayPrettier() { // for visual only
+    $('button.accordion-button').on('click', function () {
+        $(this).find('i').toggleClass('fa-spin')
+    })
+    $('.refresh-history')
+        .on('mouseover', function () {
+            $(this).find('i').addClass('fa-spin')
+        })
+        .on('mouseleave', function () {
+            $(this).find('i').removeClass('fa-spin')
+        })
 }

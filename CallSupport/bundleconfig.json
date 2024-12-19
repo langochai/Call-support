@@ -16,5 +16,11 @@
     "inputFiles": [
       "wwwroot/assets/bundles/enhanced-bootstrap-select/dist/locale/vn-VN.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/assets/bundles/bootstrap-toggle-password/togglepassword.min.js",
+    "inputFiles": [
+      "wwwroot/assets/bundles/bootstrap-toggle-password/togglepassword.js"
+    ]
   }
 ]

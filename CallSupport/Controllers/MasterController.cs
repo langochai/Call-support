@@ -10,7 +10,6 @@ namespace CallSupport.Controllers
         {
             var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
             if (!user.IsMaster) return StatusCode(403, "Bạn không có quyền truy cập.");
-            ViewBag.User = user;
             return View();
         }
     }

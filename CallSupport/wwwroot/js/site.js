@@ -9,6 +9,7 @@ $('#toggle-side-bar').on('change', function () {
     if (isChecked) document.getElementById('navbar-btn-toggle-sidebar').classList.add('change')
     else document.getElementById('navbar-btn-toggle-sidebar').classList.remove('change')
 })
+$('[type="password"]').togglepassword('btn');
 $('.fa-qrcode').closest('li').on('click', function () {
     $('#login_qrcode').empty()
     $.get({
@@ -51,6 +52,29 @@ $('#save_login_qr').on('click', function () {
             document.body.removeChild(link);
         })
     }
+})
+$('#save_changed_password').on('click', function () {
+    const oldPassword = $('#old_password').val()
+    const newPassword = $('#new_password').val()
+    $.post({
+        url: `/Login/ChangePassword`,
+        data: { oldPassword, newPassword },
+        success: () => {
+            iziToast.success({
+                title: 'Thông báo',
+                message: 'Thay đổi mật khẩu thành công<br>Vul lòng đăng nhập lại',
+                position: 'topRight',
+                progressBar: false,
+            })
+            localStorage.clear();
+            setTimeout(() => window.location.href = `/Login/Logout`, 1500)
+        },
+        error: err => iziToast.error({
+            title: 'Lỗi',
+            message: err.responseText.length < 200 ? err.responseText.length : "Lỗi hệ thống",
+            position: 'topRight'
+        }),
+    })
 })
 $('#backdrop').on('click', () => $('#toggle-side-bar').trigger('change'));
 (function ($) {

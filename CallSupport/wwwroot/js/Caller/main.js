@@ -11,6 +11,7 @@
     insertImageButton()
     pickOptionOnTable()
     $('.footer .btn').on('click', submitData)
+    $('.btn-refresh-page').on('click', clearPage)
 })
 async function loadData(selector, getData, columns) {
     const input = $(selector)
@@ -47,7 +48,7 @@ function createCarousel() {
         if (images.length > 0) $('.delete-img').show()
         else $('.delete-img').hide()
     }
-
+    $('.current-img').on('change', updateCarousel)
     $('.prev-img').on('click', function () {
         const totalImages = $currentImgDiv.find('img').length
         currentIndex = (currentIndex > 0) ? currentIndex - 1 : totalImages - 1;
@@ -67,18 +68,6 @@ function createCarousel() {
     $('#defect_img').on('change', function (event) {
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
-            //const reader = new FileReader();  //// this works fine but I don't like it, got some overheads
-            //reader.onload = function (e) {
-            //    const img = document.createElement('img');
-            //    img.src = e.target.result;
-            //    img.alt = 'Selected Image';
-            //    img.classList.add('mx-auto')
-            //    $currentImgDiv.append(img)
-            //    currentIndex = $currentImgDiv.find('img').length - 1
-            //    updateCarousel()
-            //    $('#defect_img').val('')
-            //};
-            //reader.readAsDataURL(file);
             const img = document.createElement('img');
             img.src = URL.createObjectURL(file);
             img.alt = 'Selected Image';
@@ -91,16 +80,6 @@ function createCarousel() {
     })
     $('.current-img').on('click', 'img', function () {
         convertIMG(this, '/Images/Defect')
-        //const img = this;
-        //if (img.requestFullscreen) {
-        //    img.requestFullscreen();
-        //} else if (img.mozRequestFullScreen) { // Firefox
-        //    img.mozRequestFullScreen();
-        //} else if (img.webkitRequestFullscreen) { // Chrome, Safari and Opera
-        //    img.webkitRequestFullscreen();
-        //} else if (img.msRequestFullscreen) { // IE/Edge
-        //    img.msRequestFullscreen();
-        //}
     })
     updateCarousel()
     $(window).on('resize', function () {
@@ -193,10 +172,18 @@ async function submitData() {
         const result = await createCall(data, { Tools, Images, Note })
         if (result) {
             iziToast.success({ title: "Thông báo", message: "Gọi hỗ trợ thành công", displayMode: 'once', position: 'topRight' })
+            window.scrollTo(0, 0);
             //window.location.href = "/History/Call";
         }
     }
     catch (e) {
         iziToast.error({ title: "Lỗi", message: "Thao tác không thành công", position: 'topRight', displayMode: 'replace' })
     }
+}
+function clearPage() {
+    $('.table-container tr').removeClass('active-row')
+    $('#tools-display div').removeClass('picked-tool')
+    $('.current-img img').remove()
+    $('.current-img').trigger('change')
+    $('textarea').val('')
 }

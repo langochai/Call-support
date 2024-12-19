@@ -1,8 +1,15 @@
-﻿<link href="~/css/Caller/styles.css" rel="stylesheet" />
+﻿@using Microsoft.AspNetCore.Http
+@using CallSupport.Common
+@using CallSupport.Models.DTO
+@addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    var userSession = Context.Session.GetObject<AuthInfoDTO>("User");
+}
+<link href="~/css/Caller/styles.css" rel="stylesheet" />
 <div class="w-100 p-3" style="background-color: #f6f6f6">
     <div class="mb-2">
-        <input class="form-control" style="width: 180px; display: inline" type="text" value="@ViewBag.User.UserName" readonly />
-        <button class="btn btn-primary" style="display:inline"><i class="fas fa-redo-alt"></i>  Làm mới</button>
+        <input class="form-control" style="width: 180px; display: inline" type="text" value="@userSession.UserName" readonly />
+        <button class="btn btn-primary btn-refresh-page" style="display:inline"><i class="fas fa-redo-alt"></i>  Làm mới</button>
     </div>
     <section>
         <h3>1. Chọn vị trí</h3>
@@ -175,3 +182,11 @@
 <script src="~/js/convert-img-to-blob.js"></script>
 <script src="~/js/ajax-call.js"></script>
 <script src="~/js/Caller/main.js"></script>
+@section SideBar {
+    <li class="my-3 py-2">
+        <a href="/Call"><i class="fa-solid fa-phone"></i> Gọi hỗ trợ</a>
+    </li>
+    <li class="my-3 py-2">
+        <a href="/History/Call"><i class="fa-solid fa-list"></i> Lịch sử</a>
+    </li>
+}

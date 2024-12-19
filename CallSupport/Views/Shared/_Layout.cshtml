@@ -1,6 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using CallSupport.Common
+@using CallSupport.Models.DTO
 @addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
-
+@{
+    var userSession = Context.Session.GetObject<AuthInfoDTO>("User");
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +25,7 @@
     <script src="~/assets/bundles/qrcode/qrcode.min.js"></script>
     <script src="~/assets/bundles/jsqr/jsqr.js"></script>
     <script src="~/assets/bundles/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/assets/bundles/bootstrap-toggle-password/togglepassword.min.js"></script>
     <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body>
@@ -57,7 +62,7 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <span class="dropdown-header">
-                            User: @ViewBag.User?.FullName
+                            User: @userSession.FullName
                         </span>
                     </li>
                     <li>
@@ -65,16 +70,16 @@
                             <i class="fa-solid fa-qrcode"></i> Mã QR đăng nhập
                         </a>
                     </li>
-                    @if (Convert.ToBoolean(ViewBag.Switchable))
+                    @if (Convert.ToBoolean(userSession.IsCaller) && Convert.ToBoolean(userSession.IsRepair))
                     {
                         <li>
-                            <a class="dropdown-item" href="@ViewBag.SwitchURL">
+                            <a class="dropdown-item" href="/Home/ChangePermission">
                                 <i class="fa-solid fa-diamond-turn-right"></i> Chuyển quyền
                             </a>
                         </li>
                     }
                     <li>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#change_password">
                             <i class="fas fa-cog"></i> Đổi mật khẩu
                         </a>
                     </li>
@@ -92,26 +97,7 @@
     <div id="side-bar">
         <nav id="navigation-container">
             <ul id="navigation-list" class="p-1">
-                <li class="my-3 py-2">
-                    @if (ViewBag.SwitchURL == "/Repair")
-                    {
-                        <a href="/Call"><i class="fa-solid fa-phone"></i> Gọi hỗ trợ</a>
-                    }
-                    else
-                    {
-                        <a href="/Repair"><span><i class="fa-solid fa-screwdriver-wrench"></i> Trả lời hỗ trợ</span></a>
-                    }
-                </li>
-                <li class="my-3 py-2">
-                    @if (ViewBag.SwitchURL == "/Repair")
-                    {
-                        <a href="/History/Call"><i class="fa-solid fa-list"></i> Lịch sử</a>
-                    }
-                    else
-                    {
-                        <a href="/History/Repair"><i class="fa-solid fa-list"></i> Lịch sử</a>
-                    }
-                </li>
+                @RenderSection("SideBar", required: false)
             </ul>
         </nav>
     </div>
@@ -137,9 +123,32 @@
             </div>
         </div>
     </div>
-    <input id="UserName" type="text" value="@ViewBag.User?.UserName" hidden readonly aria-hidden="true" />
-    <input id="Department" type="text" value="@ViewBag.User?.Department" hidden readonly aria-hidden="true" />
-    @if (ViewBag.User?.IsCaller)
+    <div class="modal" tabindex="-1" id="change_password">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Đổi mật khẩu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="old_password" class="form-label">Mật khẩu cũ</label>
+                        <input type="password" id="old_password" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">Mật khẩu mới</label>
+                        <input type="password" id="new_password" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="save_changed_password">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input id="UserName" type="text" value="@userSession.UserName" hidden readonly aria-hidden="true" />
+    <input id="Department" type="text" value="@userSession.Department" hidden readonly aria-hidden="true" />
+    @if (userSession.IsCaller)
     {
         <input id="IsCaller" type="checkbox" checked hidden readonly aria-hidden="true" />
     }

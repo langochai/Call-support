@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 
 namespace CallSupport.Controllers
 {
@@ -28,6 +29,8 @@ namespace CallSupport.Controllers
                 new object[] { username, password });
                 if (user == null || string.IsNullOrEmpty(user.UserName)) return StatusCode(401, "Sai tên đăng nhập!");
                 HttpContext.Session.SetObject<AuthInfoDTO>("User", user);
+                HttpContext.Session.SetObject<bool>("IsMaster", false);
+                HttpContext.Session.SetObject<bool>("IsCaller", user.IsCaller);
                 string userInfoJSON = JsonConvert.SerializeObject(user);
                 string credentials = remember ? EncryptionHelper.Encrypt(userInfoJSON) : "";
                 return Ok(credentials);
@@ -46,6 +49,7 @@ namespace CallSupport.Controllers
                     IsMaster = true
                 };
                 HttpContext.Session.SetObject<AuthInfoDTO>("User", auth);
+                HttpContext.Session.SetObject<bool>("IsMaster", true);
                 return Ok();
             }
         }
@@ -101,6 +105,48 @@ namespace CallSupport.Controllers
             if (user.UserName == null) return Forbid("Xác thực thất bại");
             string credentials = EncryptionHelper.Encrypt($"{user.UserName};;;{user.Password}"); //custom format to reduce length
             return Ok(credentials);
+        }
+        [HttpPost]
+        public IActionResult ChangePassword(string oldPassword, string newPassword)
+        {
+            bool isMaster = HttpContext.Session.GetObject<bool>("IsMaster");
+            bool isCaller = HttpContext.Session.GetObject<bool>("IsCaller");
+            var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
+            if (user.UserName == null) return Forbid("Xác thực thất bại");
+            if (isMaster)
+            {
+                var existingUserRepo = new UsersRepo(); // need two repo because entity doesnt allow changing tracked record
+                var newUserRepo = new UsersRepo();
+                var existingUser = existingUserRepo.Find(u => u.UserName == user.UserName && u.Password == oldPassword);
+                if (existingUser.Count == 0) return BadRequest("Mật khẩu cũ không chính xác");
+                var newUser = existingUser[0];
+                newUser.Password = newPassword;
+                newUserRepo.Update(newUser);
+            }
+            else
+            {
+                if (isCaller)
+                {
+                    var existingUserRepo = new CallerRepo();
+                    var newUserRepo = new CallerRepo();
+                    var existingUser = existingUserRepo.Find(u => u.CallerC == user.UserName && u.CallerPwd == oldPassword);
+                    if (existingUser.Count == 0) return BadRequest("Mật khẩu cũ không chính xác");
+                    var newUser = existingUser[0];
+                    newUser.CallerPwd = newPassword;
+                    newUserRepo.Update(newUser);
+                }
+                else
+                {
+                    var existingUserRepo = new RepairerRepo();
+                    var newUserRepo = new RepairerRepo();
+                    var existingUser = existingUserRepo.Find(u => u.RepC == user.UserName && u.RepPwd == oldPassword);
+                    if (existingUser.Count == 0) return BadRequest("Mật khẩu cũ không chính xác");
+                    var newUser = existingUser[0];
+                    newUser.RepPwd = newPassword;
+                    newUserRepo.Update(newUser);
+                }
+            }
+            return Ok();
         }
     }
 }

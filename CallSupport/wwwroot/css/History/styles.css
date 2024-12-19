@@ -24,13 +24,27 @@ tbody tr td{
     transition: background-color 1s ease, color 1s ease;
 }
     tbody tr.waiting td {
-        background-color: orangered;
-        color: white;
+        --bg-color: orangered;
+        --text-color: white;
+        background-color: var(--bg-color);
+        color: var(--text-color);
     }
     tbody tr.repairing td {
-        background-color: yellow;
+        --bg-color: yellow;
+        --text-color: black;
+        background-color: var(--bg-color);
+        color: var(--text-color);
     }
     tbody tr.finished td {
-        background-color: limegreen;
-        color: white;
+        --bg-color: limegreen;
+        --text-color: white;
+        background-color: var(--bg-color);
+        color: var(--text-color);
     }
+.line-stop {
+    background-color: orangered !important;
+    color: white !important;
+}
+.info-header{
+    color: dodgerblue;
+}

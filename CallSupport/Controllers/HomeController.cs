@@ -16,11 +16,13 @@ namespace CallSupport.Controllers
             }
             if (user.IsCaller)
             {
+                HttpContext.Session.SetObject<bool>("IsCaller", true);
                 return RedirectToAction("Index", "Call", null);
             }
             if (user.IsRepair)
             {
-                return RedirectToAction("Index", "Repair", new { actionType = "Repair" });
+                HttpContext.Session.SetObject<bool>("IsCaller", false);
+                return RedirectToAction("Index", "History", new { actionType = "Repair" });
             }
             if (user.IsMaster)
             {
@@ -31,6 +33,29 @@ namespace CallSupport.Controllers
         public IActionResult Error()
         {
             return View();
+        }
+        public IActionResult ChangePermission()
+        {
+            var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
+            if (user.UserName == null)
+            {
+                return RedirectToAction("Index", "Login", null);
+            }
+            if (user.IsMaster)
+            {
+                return RedirectToAction("Index", "Master", null);
+            }
+            if (user.IsCaller)
+            {
+                HttpContext.Session.SetObject<bool>("IsCaller", false);
+                return RedirectToAction("Index", "History", new { actionType = "Repair" });
+            }
+            if (user.IsRepair)
+            {
+                HttpContext.Session.SetObject<bool>("IsCaller", true);
+                return RedirectToAction("Index", "Call", null);
+            }
+            return RedirectToAction("Error");
         }
     }
 }

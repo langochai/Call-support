@@ -9,7 +9,15 @@ namespace CallSupport.Controllers
     {
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "History", new { actionType = "Repair" });
+            var lastCall = HttpContext.Session.GetObject<HistoryInfoDTO>("LastCall");
+            if (lastCall.Line_c == null) return RedirectToAction("Index", "History", new { actionType = "Repair" });
+            else return RedirectToAction("Details", new
+            {
+                time = lastCall.Calling_time,
+                line = lastCall.Line_c,
+                section = lastCall.Sec_c,
+                position = lastCall.Pos_c,
+            });
         }
         public IActionResult Details(DateTime time, string line, string section, string position)
         {
@@ -18,9 +26,6 @@ namespace CallSupport.Controllers
             {
                 return Forbid("Bạn không có quyền truy cập");
             }
-            ViewBag.User = user;
-            ViewBag.Switchable = user.IsCaller;
-            ViewBag.SwitchURL = "/Call";
             return View();
         }
     }

@@ -16,9 +16,6 @@ namespace CallSupport.Controllers
         {
             var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
             if (user.UserName == null) return RedirectToAction("Index", "Login", null);
-            ViewBag.User = user;
-            ViewBag.Switchable = user.IsRepair;
-            ViewBag.SwitchURL = "/Repair";
             return View();
         }
 
