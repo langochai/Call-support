@@ -19,8 +19,17 @@
 input[type="date"] {
     border: 1px solid #6c757d
 }
-tbody tr td{
+td.text-wrap {
+    text-align: center;
+    height: 100px;
+    cursor: pointer;
+}
+.table-history{
+    min-width: 696px
+}
+tbody tr td {
     font-weight: bold;
+    vertical-align: middle;
     transition: background-color 1s ease, color 1s ease;
 }
     tbody tr.waiting td {
@@ -41,10 +50,29 @@ tbody tr td{
         background-color: var(--bg-color);
         color: var(--text-color);
     }
+        tbody td.flashing {
+            animation: flash 1s infinite alternate;
+        }
+@keyframes flash {
+    0% {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+    }
+
+    50% {
+        background-color: darkred;
+        color: white;
+    }
+
+    100% {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+    }
+}
 .line-stop {
-    background-color: orangered !important;
+    background-color: darkred !important;
     color: white !important;
 }
 .info-header{
-    color: dodgerblue;
+    color: dodgerblue !important;
 }

@@ -99,13 +99,14 @@ async function loadHistoryData() {
         const tbody = $('tbody')
         tbody.empty()
         data.forEach(d => {
-            const row = $(`<tr class="${getRowClassName(d.Status_calling)}"></tr>`)
+            const lineStoppedClass = d.Status_line ? ('line-stop') : '';
+            const row = $(`<tr class="${getRowClassName(d.Status_calling)} display-row"></tr>`)
             row.append($(`<td class="text-wrap text-break">${d.Line_c}</td>`))
             row.append($(`<td class="text-wrap text-break">${d.Line_nm}</td>`))
             row.append($(`<td class="text-wrap text-break">${d.Sec_nm}</td>`))
             row.append($(`<td class="text-wrap text-break">${d.Pos_nm}</td>`))
             row.append($(`<td class="text-wrap text-break">${d.ToDep_c}</td>`))
-            row.append($(`<td class="text-wrap text-break ${d.Status_line && ('line-stop')}">${d.tenloi}</td>`))
+            row.append($(`<td class="text-wrap text-break ${lineStoppedClass}">${d.tenloi}</td>`))
             row.append($(`<td class="text-wrap text-break">${toVNDateTime(d.Calling_time)}</td>`))
             row.data('data', d)
             row.on('click', showCallDetails)
@@ -134,13 +135,14 @@ async function refreshHistory(actionType, inserted, deleted) {
         if (!isWithinDateRange(inserted.Calling_time)) return;
         const data = await getHistoryDetails(inserted.Calling_time, inserted.Line_c, inserted.Sec_c, inserted.Pos_c)
         if (!data.length) return;
-        const row = $(`<tr class="${getRowClassName(data[0].Status_calling)}"></tr>`)
+        const lineStoppedClass = data[0].Status_line ? ('line-stop') : '';
+        const row = $(`<tr class="${getRowClassName(data[0].Status_calling)} display-row"></tr>`)
         row.append($(`<td class="text-wrap text-break">${data[0].Line_c}</td>`))
         row.append($(`<td class="text-wrap text-break">${data[0].Line_nm}</td>`))
         row.append($(`<td class="text-wrap text-break">${data[0].Sec_nm}</td>`))
         row.append($(`<td class="text-wrap text-break">${data[0].Pos_nm}</td>`))
         row.append($(`<td class="text-wrap text-break">${data[0].ToDep_c}</td>`))
-        row.append($(`<td class="text-wrap text-break ${data[0].Status_line && ('line-stop')}">${data[0].tenloi}</td>`))
+        row.append($(`<td class="text-wrap text-break ${lineStoppedClass}">${data[0].tenloi}</td>`))
         row.append($(`<td class="text-wrap text-break">${toVNDateTime(data[0].Calling_time)}</td>`))
         row.data('data', data[0])
         row.on('click', showCallDetails)
@@ -150,14 +152,14 @@ async function refreshHistory(actionType, inserted, deleted) {
         if (!isWithinDateRange(inserted.Calling_time)) return;
         const data = await getHistoryDetails(inserted.Calling_time, inserted.Line_c, inserted.Sec_c, inserted.Pos_c)
         if (!data.length) return;
-        const updateRow = tbody.find('tr').filter((i, r) => {
+        const updateRow = tbody.find('tr.display-row').filter((i, r) => {
             const rowData = $(r).data('data')
             return new Date(rowData.Calling_time).getTime() == new Date(inserted.Calling_time).getTime() &&
                 rowData.Line_c == inserted.Line_c &&
                 rowData.Sec_c == inserted.Sec_c &&
                 rowData.Pos_c == inserted.Pos_c
         }).eq(0)
-        updateRow.attr('class', getRowClassName(data[0].Status_calling))
+        updateRow.removeClass('waiting repairing finished').addClass(getRowClassName(data[0].Status_calling))
         updateRow.children('td:nth-child(1)').text(`${data[0].Line_c}`);
         updateRow.children('td:nth-child(2)').text(`${data[0].Line_nm}`);
         updateRow.children('td:nth-child(3)').text(`${data[0].Sec_nm}`);
@@ -171,17 +173,22 @@ async function refreshHistory(actionType, inserted, deleted) {
     }
     if (actionType === 'Delete') {
         if (!isWithinDateRange(deleted.Calling_time)) return;
-        tbody.find('tr').filter((i, r) => {
-            const rowData = $(r).data('data')
+        const row = tbody.find('tr.display-row').filter((i, r) => {
+            const rowData = $(r).data('data');
             return new Date(rowData.Calling_time).getTime() == new Date(deleted.Calling_time).getTime() &&
                 rowData.Line_c == deleted.Line_c &&
                 rowData.Sec_c == deleted.Sec_c &&
                 rowData.Pos_c == deleted.Pos_c
-        }).eq(0).remove()
+        }).eq(0)
+        if (row.hasClass('expand')) row.trigger('click');
+        row.remove()
     }
 }
 function showCallDetails() {
     const $row = $(this)
+    const isCaller = $('#is_caller').prop('checked')
+    let updateWaitTimeInterval;
+    let updateRepairTimeInterval;
     $row.toggleClass('expand')
     if ($row.hasClass('expand')) {
         const data = $row.data('data')
@@ -189,9 +196,9 @@ function showCallDetails() {
         const repairTime = data.Repairing_time != null ? toVNDateTime(data.Repairing_time) : ''
         const confirmTime = data.Confirm_time != null ? toVNDateTime(data.Confirm_time) : ''
         const $detailRow = $(`<tr></tr>`)
-        const $container = $(`<td class="p-3" colspan="7" style="display:none"></td>`)
+        const $container = $(`<td class="p-3" colspan="7" style="display:none;background-color: #dee2e6"></td>`)
         const $table = $(
-            `<table class="table table-bordered table-hover table-call-details">
+            `<table class="table table-bordered table-call-details">
                 <tr>
                     <td><span class="info-header">Mã chuyền</span>: ${data.Line_c}</td>
                     <td><span class="info-header">Tên chuyền</span>: ${data.Line_nm}</td>
@@ -208,28 +215,55 @@ function showCallDetails() {
                     <td colspan="2"><span class="info-header">Loại lỗi</span>: ${data.tenloi}</td>
                 </tr>
                 <tr>
-                    <td colspan="2"><span class="info-header">Loại lỗi</span>: ${data.tenloi}</td>
-                </tr>
-                <tr>
                     <td colspan="2"><span class="info-header">Người sửa</span>: ${data.Rep_nm ?? ''}</td>
                 </tr>
                 <tr>
-                    <td colspan="2"><span class="info-header">TG Gọi</span>: ${callTime}</td>
+                    <td><span class="info-header">TG Gọi</span>: ${callTime}</td>
+                    <td>
+                        <span class="info-header">TG chờ sửa chữa</span>:
+                        <span class="wait-time" data-value="${data.Calling_time}">${getTimeSpan(data.Calling_time)}</span>
+                    </td>
                 </tr>
                 <tr>
-                    <td colspan="2"><span class="info-header">TG Sửa</span>: ${repairTime}</td>
+                    <td><span class="info-header">TG Sửa</span>: ${repairTime}</td>
+                    <td>
+                        <span class="info-header">TG đang sửa chữa</span>:
+                        <span class="repair-time" data-value="${data.Repairing_time}">${getTimeSpan(data.Repairing_time)}</span>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="2"><span class="info-header">TG Xác nhận</span>: ${confirmTime}</td>
                 </tr>
             </table>`
         )
-
+        updateWaitTimeInterval = setInterval(() => updateTimeSpan($table.find('.wait-time')), 1000)
+        if (data.Rep_nm) updateRepairTimeInterval = setInterval(() => updateTimeSpan($table.find('.repair-time')), 1000)
+        const $moveToRepair = $(
+            `<a href="/Repair/Details?time=${new Date(data.Calling_time).getTime()}&line=${data.Line_c}&section=${data.Sec_c}&position=${data.Pos_c}"
+                    class="btn btn-success btn-repair">
+                Sửa chữa
+            </a>`
+        )
+        $moveToRepair.on('click', function (e) {
+            const userDepartment = $('#Department').val()
+            if (userDepartment != data.ToDep_c) {
+                e.preventDefault()
+                iziToast.warning({
+                    title: 'Thông báo',
+                    message: 'Bạn không thuộc bộ phận được gọi',
+                    position: 'topRight',
+                    displayMode: 'replace'
+                })
+            }
+        })
         $container.append($table)
+        if (!isCaller) $container.append($moveToRepair);
         $detailRow.append($container)
         $row.after($detailRow)
         $container.slideDown('fast')
     } else {
+        clearInterval(updateWaitTimeInterval)
+        clearInterval(updateRepairTimeInterval)
         $row.next().find('td').slideUp('fast', function () {
             $(this).closest('tr').remove()
         })
@@ -247,6 +281,21 @@ function isWithinDateRange(dateString) {
     fromDate.setHours(0, 0, 0, 0);
     toDate.setHours(23, 59, 59, 999);
     return date >= fromDate && date <= toDate; //remember to use .getTime() if you're not using >= or <=
+}
+function getTimeSpan(dateString) {
+    if (dateString == null) return '';
+    let givenDate = new Date(dateString);
+    let now = new Date();
+    let difference = now - givenDate;
+    let hours = Math.floor(difference / (1000 * 60 * 60));
+    let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+function updateTimeSpan(element) {
+    const timeValue = element.attr('data-value')
+    const newText = getTimeSpan(timeValue)
+    element.text(newText)
 }
 function displayPrettier() { // for visual only
     $('button.accordion-button').on('click', function () {

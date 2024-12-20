@@ -13,19 +13,27 @@ namespace CallSupport.Controllers
             if (lastCall.Line_c == null) return RedirectToAction("Index", "History", new { actionType = "Repair" });
             else return RedirectToAction("Details", new
             {
-                time = lastCall.Calling_time,
+                time = ((DateTimeOffset)lastCall.Calling_time).ToUnixTimeMilliseconds(),
                 line = lastCall.Line_c,
                 section = lastCall.Sec_c,
                 position = lastCall.Pos_c,
             });
         }
-        public IActionResult Details(DateTime time, string line, string section, string position)
+        public IActionResult Details(long time, string line, string section, string position)
         {
             var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
             if (!user.IsRepair)
             {
                 return Forbid("Bạn không có quyền truy cập");
             }
+            DateTime callTime = DateTimeOffset.FromUnixTimeMilliseconds(time).DateTime;
+            HttpContext.Session.SetObject<HistoryInfoDTO>("LastCall", new HistoryInfoDTO
+            {
+                Calling_time = callTime,
+                Line_c = line,
+                Sec_c = section,
+                Pos_c = position,
+            });
             return View();
         }
     }

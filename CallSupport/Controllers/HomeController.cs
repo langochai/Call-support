@@ -37,6 +37,7 @@ namespace CallSupport.Controllers
         public IActionResult ChangePermission()
         {
             var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
+            var isCaller = HttpContext.Session.GetObject<bool>("IsCaller");
             if (user.UserName == null)
             {
                 return RedirectToAction("Index", "Login", null);
@@ -45,12 +46,12 @@ namespace CallSupport.Controllers
             {
                 return RedirectToAction("Index", "Master", null);
             }
-            if (user.IsCaller)
+            if (isCaller)
             {
                 HttpContext.Session.SetObject<bool>("IsCaller", false);
                 return RedirectToAction("Index", "History", new { actionType = "Repair" });
             }
-            if (user.IsRepair)
+            if (!isCaller)  // didn't use `else` here just in case we need another permission, which is highly possible
             {
                 HttpContext.Session.SetObject<bool>("IsCaller", true);
                 return RedirectToAction("Index", "Call", null);

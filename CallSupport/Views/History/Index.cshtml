@@ -5,6 +5,10 @@
 @{
     var IsCaller = Context.Session.GetObject<bool>("IsCaller");
 }
+@if (IsCaller)
+{ 
+    <input type="checkbox" id="is_caller" checked hidden/>
+}
 <link href="~/css/history/styles.css" rel="stylesheet" />
 <div class="mb-2">
     <div class="accordion" id="setting">
@@ -76,8 +80,8 @@
         <span class="col-4 py-2 border text-center status-showcase green">Hoàn thành</span>
     </div>
 </div>
-<div class="mb-2">
-    <table class="table table-bordered table-hover" style="table-layout:fixed">
+<div class="mb-2 table-responsive-sm">
+    <table class="table table-bordered table-hover table-history" style="table-layout:fixed">
         <colgroup>
             <col style="width:10%" />
             <col style="width:15%" />
@@ -89,13 +93,13 @@
         </colgroup>
         <thead>
             <tr>
-                <th class="text-center text-wrap text-break align-middle">Mã dây chuyền</th>
-                <th class="text-center text-wrap text-break align-middle">Tên dây chuyền</th>
-                <th class="text-center text-wrap text-break align-middle">Công đoạn</th>
-                <th class="text-center text-wrap text-break align-middle">Vị trí</th>
-                <th class="text-center text-wrap text-break align-middle">Gọi bộ phận</th>
-                <th class="text-center text-wrap text-break align-middle">Lỗi</th>
-                <th class="text-center text-wrap text-break align-middle">TG gọi</th>
+                <th class="text-center text-wrap text-break align-middle info-header">Mã dây chuyền</th>
+                <th class="text-center text-wrap text-break align-middle info-header">Tên dây chuyền</th>
+                <th class="text-center text-wrap text-break align-middle info-header">Công đoạn</th>
+                <th class="text-center text-wrap text-break align-middle info-header">Vị trí</th>
+                <th class="text-center text-wrap text-break align-middle info-header">Gọi bộ phận</th>
+                <th class="text-center text-wrap text-break align-middle info-header">Lỗi</th>
+                <th class="text-center text-wrap text-break align-middle info-header">TG gọi</th>
                 @* <th>TG chờ</th> *@
                 @* <th>TG sửa</th> *@
                 @* <th>TG xác nhận</th> *@
