@@ -3,7 +3,7 @@
  * @param {string} selector Selector for one <img>
  * @param {string} url Server endpoint for sending the image
  */
-function convertIMG(selector, url) {
+function convertIMG(selector, url, index) {
     return new Promise((resolve, reject) => {
         const img = $(selector)
         if (img.length > 1) throw new Error('Use one image only you retard')
@@ -13,7 +13,7 @@ function convertIMG(selector, url) {
             .then(blob => {
                 const formData = new FormData();
                 var fileType = blob.type.split('/')[1];
-                formData.append('file', blob, `${Date.parse(new Date())}.${fileType}`);
+                formData.append('file', blob, `${Date.parse(new Date())}-${index}.${fileType}`);
                 $.ajax({
                     url: url,
                     type: 'POST',

@@ -20,6 +20,7 @@ namespace CallSupport.Models.Context
         public virtual DbSet<CallerMst> CallerMst { get; set; }
         public virtual DbSet<DefectMst> DefectMst { get; set; }
         public virtual DbSet<DepMst> DepMst { get; set; }
+        public virtual DbSet<GroupdefectMst> GroupdefectMst { get; set; }
         public virtual DbSet<HistoryImg> HistoryImg { get; set; }
         public virtual DbSet<HistoryMst> HistoryMst { get; set; }
         public virtual DbSet<ImagesAfterRepair> ImagesAfterRepair { get; set; }
@@ -336,6 +337,48 @@ namespace CallSupport.Models.Context
                 entity.Property(e => e.UserId)
                     .HasColumnName("UserID")
                     .HasMaxLength(25)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<GroupdefectMst>(entity =>
+            {
+                entity.HasKey(e => new { e.GroupdefectC, e.DepC });
+
+                entity.ToTable("groupdefect_mst");
+
+                entity.Property(e => e.GroupdefectC)
+                    .HasColumnName("groupdefect_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DepC)
+                    .HasColumnName("dep_c")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComputerName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.GroupdefectNm)
+                    .HasColumnName("groupdefect_nm")
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.Ipaddress)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Sort)
+                    .HasColumnName("sort")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.UpDt)
+                    .HasColumnName("up_dt")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("USER_ID")
+                    .HasMaxLength(50)
                     .IsUnicode(false);
             });
 

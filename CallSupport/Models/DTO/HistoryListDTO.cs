@@ -39,8 +39,9 @@ namespace CallSupport.Models.DTO
         public int SoGioSuaThucTe { get; set; }
         public int SoGioNghiGiuaGio { get; set; }
         public string Tools { get; set; }
-        public string DefectNote { get; set; }
-        public string RepairNote { get; set; }
+        public string ToolNames { get; set; }
+        public string defect_note { get; set; }
+        public string repair_note { get; set; }
         public string DefectImg { get; set; }
         public string BeforeRepairImg { get; set; }
         public string AfterRepairImg { get; set; }
@@ -49,6 +50,7 @@ namespace CallSupport.Models.DTO
         public string Pos_nm { get; set; }
         public string Dep_nm { get; set; }
         public string tenloi { get; set; }
-        public string Rep_nm { get; set; }
+        public string RepairerName { get; set; }
+        public string ConfirmName { get; set; }
     }
 }

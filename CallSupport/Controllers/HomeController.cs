@@ -54,6 +54,7 @@ namespace CallSupport.Controllers
             if (!isCaller)  // didn't use `else` here just in case we need another permission, which is highly possible
             {
                 HttpContext.Session.SetObject<bool>("IsCaller", true);
+                HttpContext.Session.Remove("LastCall");
                 return RedirectToAction("Index", "Call", null);
             }
             return RedirectToAction("Error");

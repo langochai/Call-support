@@ -1,39 +1,35 @@
-﻿$(() => {
+﻿var signalConn
+$(() => {
     const UserName = $('#UserName').val();
     const Department = $('#Department').val();
     const IsCaller = $('#IsCaller').prop('checked');
-    const connection = new signalR.HubConnectionBuilder()
+    signalConn = new signalR.HubConnectionBuilder()
         .withUrl(`/notificationHub?UserName=${UserName}&Department=${Department}&IsCaller=${IsCaller}`)
         .withAutomaticReconnect()
         .build();
 
-    connection.start().catch(err => console.error(err.toString()));
+    signalConn.start().catch(err => console.error(err.toString()));
 
-    connection.on("ReceiveMessage", (fromUserId, message) => {
-        $('#messagesList').append($(`<li>User ${fromUserId} whispered: ${message}</li>`))
-    });
-    connection.on("RefreshHistory", (data) => {
+    signalConn.on("RefreshHistory", (data) => {
         data = JSON.parse(data)
         const parser = new DOMParser();
         const insertXMLDoc = parser.parseFromString(data.Inserted, "text/xml");
         const deleteXMLDoc = parser.parseFromString(data.Deleted, "text/xml");
         const inserted = data.Inserted === null ? '' : xmlToObject(insertXMLDoc.documentElement);
         const deleted = data.Deleted === null ? '' : xmlToObject(deleteXMLDoc.documentElement);
-        refreshHistory?.(data.NotificationType, inserted, deleted)
+        refreshHistory?.(data.NotificationType, inserted, deleted) // null properties will be omitted
     });
-    connection.on("Error", (error) => {
+    signalConn.on("Error", (error) => {
         console.error(error)
-        iziToast.error({ title: 'Lỗi', message: 'Kết nối dữ liệu thất bại', position: 'topRight', displayMode: 'once' })
+        iziToast.error({ title: 'Thông báo', message: 'Kết nối đã bị ngắt', position: 'topRight', displayMode: 'once' })
     });
 })
 function xmlToObject(xml) {
     const obj = {};
-
     // Handle text nodes
     if (xml.nodeType === Node.TEXT_NODE) {
         return xml.nodeValue.trim();
     }
-
     // Handle attributes
     if (xml.attributes && xml.attributes.length > 0) {
         obj["@attributes"] = {};
@@ -41,7 +37,6 @@ function xmlToObject(xml) {
             obj["@attributes"][attr.nodeName] = attr.nodeValue;
         }
     }
-
     // Handle child nodes
     for (let child of xml.childNodes) {
         if (child.nodeType === Node.TEXT_NODE) {
@@ -64,6 +59,5 @@ function xmlToObject(xml) {
             }
         }
     }
-
     return (obj);
 }

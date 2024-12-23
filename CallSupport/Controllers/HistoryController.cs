@@ -3,7 +3,6 @@ using CallSupport.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CallSupport.Controllers
 {

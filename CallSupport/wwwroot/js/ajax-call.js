@@ -154,6 +154,42 @@ function getDefects(search = '', offset = 0) {
         })
     })
 }
+function getGroupDefect(search = '', offset = 0) {
+    return new Promise(resolve => {
+        $.get({
+            url: `/GroupDefects?offset=${+offset}&` + (search ? `search=${search}` : ''),
+            success: data => resolve(data),
+            error: err => {
+                console.error(err)
+                iziToast.error({
+                    title: 'Lỗi',
+                    message: 'Load dữ liệu nhóm lỗi thất bại',
+                    displayMode: 1,
+                    position: 'topRight'
+                });
+                resolve()
+            }
+        })
+    })
+}
+function getDetailedDefect(groupCode, search = '', offset = 0) {
+    return new Promise(resolve => {
+        $.get({
+            url: `/DetailedDefects?groupCode=${groupCode}offset=${+offset}&` + (search ? `search=${search}` : ''),
+            success: data => resolve(data),
+            error: err => {
+                console.error(err)
+                iziToast.error({
+                    title: 'Lỗi',
+                    message: 'Load dữ liệu lỗi chi tiết thất bại',
+                    displayMode: 1,
+                    position: 'topRight'
+                });
+                resolve()
+            }
+        })
+    })
+}
 /**
  * Get lists of tools
  * @param {string} search String to search upon
@@ -222,6 +258,14 @@ function getHistory(fromDate, toDate, fromDep, toDep, lines, offset = '', limit 
         })
     })
 }
+/**
+ * Get call's details
+ * @param {Date} callingTime
+ * @param {string} line
+ * @param {string} section
+ * @param {string} position
+ * @returns
+ */
 function getHistoryDetails(callingTime, line, section, position) {
     return new Promise(resolve => {
         $.get({
@@ -232,6 +276,44 @@ function getHistoryDetails(callingTime, line, section, position) {
                 iziToast.error({
                     title: 'Lỗi',
                     message: 'Load dữ liệu lịch sử thất bại',
+                    displayMode: 1,
+                    position: 'topRight'
+                });
+                resolve()
+            }
+        })
+    })
+}
+function updateCallBeforeRepair(time, line, section, position, imgIDs) {
+    return new Promise(resolve => {
+        $.post({
+            url: `/Repair/StartRepair`,
+            data: { time, line, section, position, imgIDs },
+            success: result => resolve(result),
+            error: err => {
+                console.error(err)
+                iziToast.error({
+                    title: 'Lỗi',
+                    message: 'Cập nhật dữ liệu lịch sử thất bại',
+                    displayMode: 1,
+                    position: 'topRight'
+                });
+                resolve()
+            }
+        })
+    })
+}
+function updateCallAfterRepair(time, line, section, position, imgIDs, note) {
+    return new Promise(resolve => {
+        $.post({
+            url: `/Repair/EndRepair`,
+            data: { time, line, section, position, imgIDs, note },
+            success: result => resolve(result),
+            error: err => {
+                console.error(err)
+                iziToast.error({
+                    title: 'Lỗi',
+                    message: 'Cập nhật dữ liệu lịch sử thất bại',
                     displayMode: 1,
                     position: 'topRight'
                 });

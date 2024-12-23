@@ -78,9 +78,9 @@ function createCarousel() {
             $('#defect_img').val('')
         }
     })
-    $('.current-img').on('click', 'img', function () {
-        convertIMG(this, '/Images/Defect')
-    })
+    //$('.current-img').on('click', 'img', function () {
+    //    convertIMG(this, '/Images/Defect')
+    //})
     updateCarousel()
     $(window).on('resize', function () {
         updateCarousel();
@@ -153,8 +153,8 @@ async function submitData() {
             return $(this).data('tool-id')
         }).get()
         const Images = await Promise.all(
-            $('.current-img img').map(async function () {
-                return await convertIMG(this, `/Images/Defect`)
+            $('.current-img img').map(async function (index, img) {
+                return await convertIMG(img, `/Images/Defect`, index)
             }).get()
         )
         const Note = $('textarea').val()

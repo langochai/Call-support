@@ -8,14 +8,15 @@
                 if (!options.columns) throw new Error('columns is missing');
                 settings.isLoading = true;
                 const data = await options.fetchData(rowCount);
-                data.forEach(d => {
-                    const row = $(`<tr class="${d.rowClass ?? ''}"></tr>`);
-                    options.columns.forEach(c => {
-                        row.append($(`<td>${d[c]}</td>`));
+                if (data.length)
+                    data.forEach(d => {
+                        const row = $(`<tr class="${d.rowClass ?? ''}"></tr>`);
+                        options.columns.forEach(c => {
+                            row.append($(`<td>${d[c]}</td>`));
+                        });
+                        row.data('data', d)
+                        tableBody.append(row);
                     });
-                    row.data('data', d)
-                    tableBody.append(row);
-                });
                 rowCount += data.length;
                 settings.isLoading = false;
                 return rowCount;

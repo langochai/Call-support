@@ -1,7 +1,9 @@
 ﻿using CallSupport.Common;
 using CallSupport.Models.DTO;
+using CallSupport.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 
 namespace CallSupport.Controllers
 {
@@ -26,7 +28,13 @@ namespace CallSupport.Controllers
             {
                 return Forbid("Bạn không có quyền truy cập");
             }
-            DateTime callTime = DateTimeOffset.FromUnixTimeMilliseconds(time).DateTime;
+            DateTimeOffset callTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(time); 
+            DateTime callTime = callTimeOffset.UtcDateTime.AddHours(7); // Vietnam uses UTC +7
+            var historyRepo = new HistoryRepo();
+            var existingCalls = historyRepo.Find(h => h.CallingTime == callTime && h.LineC == line &&
+                h.SecC == section && h.PosC == position);
+            if (existingCalls.Count == 0) return BadRequest("Dữ liệu không tồn tại hoặc đã bị xóa");
+            if (existingCalls[0].ToDepC != user.Department) return Forbid("Bạn không thuộc bộ phận được gọi");
             HttpContext.Session.SetObject<HistoryInfoDTO>("LastCall", new HistoryInfoDTO
             {
                 Calling_time = callTime,
@@ -35,6 +43,81 @@ namespace CallSupport.Controllers
                 Pos_c = position,
             });
             return View();
+        }
+        [HttpPost]
+        public IActionResult StartRepair(long time, string line, string section, string position, List<string> imgIDs)
+        {
+            var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
+            if (!user.IsRepair)
+            {
+                return Forbid("Bạn không có quyền truy cập");
+            }
+            DateTimeOffset callTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(time);
+            DateTime callTime = callTimeOffset.UtcDateTime.AddHours(7); // Vietnam uses UTC +7
+            var existCallRepo = new HistoryRepo();
+            var newCallRepo = new HistoryRepo();
+            var existIMGRepo = new HistoryIMGRepo();
+            var newIMGRepo = new HistoryIMGRepo();
+            try
+            {
+                var existingCalls = existCallRepo.Find(h => h.CallingTime == callTime && h.LineC == line &&
+                    h.SecC == section && h.PosC == position);
+                var existingIMG = existIMGRepo.Find(img => img.CallingTime == callTime && img.LineC == line &&
+                    img.SecC == section && img.PosC == position);
+                if (existingCalls.Count == 0 || existingIMG.Count == 0) return BadRequest("Dữ liệu không tồn tại hoặc đã bị xóa");
+                var updateCall = existingCalls[0];
+                var updateIMG = existingIMG[0];
+                updateCall.RepairingTime = SQLUtilities.GetDate();
+                updateCall.RepC = user.UserName;
+                updateCall.DepCRep = user.Department;
+                updateCall.StatusCalling = "1"; // "1" means start repairing
+                updateIMG.AfterRepairImg = String.Join(',', imgIDs);
+                newCallRepo.Update(updateCall);
+                newIMGRepo.Update(updateIMG);
+                return Ok();
+            }
+            catch (Exception ex) 
+            {
+                return StatusCode(500, $"Lỗi hệ thống: {ex.Message}");
+            }
+        }
+        [HttpPost]
+        public IActionResult EndRepair(long time, string line, string section, string position, List<string> imgIDs, string note)
+        {
+            var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
+            if (!user.IsRepair)
+            {
+                return Forbid("Bạn không có quyền truy cập");
+            }
+            DateTimeOffset callTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(time);
+            DateTime callTime = callTimeOffset.UtcDateTime.AddHours(7); // Vietnam uses UTC +7
+            var existCallRepo = new HistoryRepo();
+            var newCallRepo = new HistoryRepo();
+            var existIMGRepo = new HistoryIMGRepo();
+            var newIMGRepo = new HistoryIMGRepo();
+            try
+            {
+                var existingCalls = existCallRepo.Find(h => h.CallingTime == callTime && h.LineC == line &&
+                    h.SecC == section && h.PosC == position);
+                var existingIMG = existIMGRepo.Find(img => img.CallingTime == callTime && img.LineC == line &&
+                    img.SecC == section && img.PosC == position);
+                if (existingCalls.Count == 0 || existingIMG.Count == 0) return BadRequest("Dữ liệu không tồn tại hoặc đã bị xóa");
+                var updateCall = existingCalls[0];
+                var updateIMG = existingIMG[0];
+                updateCall.RepairingTime = SQLUtilities.GetDate();
+                updateCall.RepC = user.UserName;
+                updateCall.DepCRep = user.Department;
+                updateCall.StatusCalling = "2"; // "2" means finished repairing
+                updateIMG.AfterRepairImg = String.Join(',', imgIDs);
+                updateIMG.RepairNote = note;
+                newCallRepo.Update(updateCall);
+                newIMGRepo.Update(updateIMG);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi hệ thống: {ex.Message}");
+            }
         }
     }
 }

@@ -122,3 +122,6 @@
         min-width: 85%
     }
 }
+.table .active-row td {
+    background-color: skyblue !important;
+}
