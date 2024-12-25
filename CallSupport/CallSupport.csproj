@@ -28,7 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\uploads\Repair\" />
+    <Folder Include="wwwroot\uploads\Repair\After\" />
+    <Folder Include="wwwroot\uploads\Repair\Before\" />
   </ItemGroup>
 
 </Project>

@@ -156,6 +156,7 @@ namespace CallSupport
             //        context.Context.Response.Headers["Expires"] = "0";
             //    }
             //});
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseRouting();
 
             app.UseAuthentication();
