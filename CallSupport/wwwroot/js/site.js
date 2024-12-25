@@ -10,6 +10,7 @@ $('#toggle-side-bar').on('change', function () {
     else document.getElementById('navbar-btn-toggle-sidebar').classList.remove('change')
 })
 $('[type="password"]').togglepassword('btn');
+$('header .dropdown').on('click', () => $('#toggle-side-bar').prop('checked', false).trigger('change'))
 $('.fa-qrcode').closest('li').on('click', function () {
     $('#login_qrcode').empty()
     $.get({
@@ -23,7 +24,7 @@ $('.fa-qrcode').closest('li').on('click', function () {
         },
         err: function (err) {
             console.error(err)
-            
+
         }
     })
 })
@@ -78,7 +79,7 @@ $('#save_changed_password').on('click', function () {
 })
 $('#backdrop').on('click', () => $('#toggle-side-bar').trigger('change'));
 (function ($) {
-    $.fn.searchInput = function (callback, timeout = 350) {
+    $.fn.searchInput = function (callback, timeout = 200) {
         let typingTimer;
         let currentRequest;
         this.on('keyup.searchInput', function () {
@@ -94,13 +95,14 @@ $('#backdrop').on('click', () => $('#toggle-side-bar').trigger('change'));
         function doneTyping() {
             callback();
         }
-        this.cleanup = function () {
+        const cleanup = () => {
             clearTimeout(typingTimer);
             if (currentRequest) {
                 currentRequest.abort();
             }
             this.off('.searchInput');
         };
+        this.data('cleanup', cleanup);
 
         return this;
     };

@@ -16,6 +16,7 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Xml.Linq;
 using CallSupport.Hubs;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace CallSupport
 {
@@ -57,7 +58,10 @@ namespace CallSupport
             {
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("vi-VN") };
             });
-            //ConfigureDatabase(services);
+            services.Configure<FormOptions>(options => {
+                options.MultipartBodyLengthLimit = 10485760; // 10 MB limit
+            });
+            services.AddDirectoryBrowser();
         }
         private string GetConnectionStringWithFallback(string fallbackKey)
         {
@@ -144,7 +148,14 @@ namespace CallSupport
             app.UseCors("LinecodeSupport");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    OnPrepareResponse = context => {
+            //        context.Context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+            //        context.Context.Response.Headers["Pragma"] = "no-cache";
+            //        context.Context.Response.Headers["Expires"] = "0";
+            //    }
+            //});
             app.UseRouting();
 
             app.UseAuthentication();

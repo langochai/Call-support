@@ -4,13 +4,16 @@
     createCarousel('#before_repair_img')
     createCarousel('#after_repair_img')
     insertImageButton()
-    await loadData('.group-defect', getGroupDefect, ['GroupdefectC', 'GroupdefectNm'])
-    await loadData('.detailed-defect', getDetailedDefectOnGroup, ['Maloi', 'Tenloi'])
     pickOptionOnGroupDefect()
     pickOptionOnDetailedDefect()
     $('.btn-receive').on('click', receiveCall)
     $('.btn-repair').on('click', startRepair)
+    $('.btn-confirm').on('click', endRepair)
+    $('#is_stopped_assy,#is_stopped_qa').on('click', switchLineStatus)
     await loadCallDetails()
+    await loadData('.group-defect', getGroupDefectCode, ['GroupdefectC', 'GroupdefectNm'])
+    await loadData('.detailed-defect', getDetailedDefectOnGroup, ['Maloi', 'Tenloi'])
+    onChangeGroupDefect()
 })
 function createCarousel(wrapperSelector) {
     let currentIndex = 0;
@@ -72,6 +75,7 @@ function insertImageButton() {
 }
 async function loadData(selector, getData, columns) {
     const input = $(selector)
+    if (!input.length) return;
     const table = input.parent().next()
     const options = {
         fetchData: async function (rowCount) {
@@ -106,6 +110,7 @@ async function loadCallDetails() {
     });
     const data = result[0]
     console.log(data);
+    $('.group-defect').data('department', data.ToDep_c)
     $('.position-name').text(data.Pos_nm)
     $('.line-name').text(data.Line_nm)
     $('.section-name').text(data.Sec_nm)
@@ -122,23 +127,47 @@ async function loadCallDetails() {
     })
     $('#caller_defects').trigger('change')
     $('.defect-note').val(data.defect_note)
-    if (data.Confirm_c && data.Confirm_time) {
+    if (data.Rep_c && data.Repairing_time) {
         $('.btn-receive').trigger('click')
-        const repairArea = $('.btn-repair').parent().parent().next()
-        repairArea.find('.img-input').remove()
+        const repairArea = $('.btn-repair').parent().parent().next();
         data.BeforeRepairImg?.split(',')?.forEach((bi, i) => {
             const img = $(`<img src="${bi}" />`)
             $('#before_repair_img .current-img').append(img)
+        });
+        $('#before_repair_img').trigger('change');
+        $('#before_repair_img .img-input').empty().addClass('mb-3');
+        $('#before_repair_img .delete-img').remove();
+        repairArea.show();
+        $('.btn-repair').remove();
+    }
+    if (data.Confirm_time) {
+        $('.table-group-defect').closest('section').remove()
+        $('.detailed-defect').attr('disabled', true).removeClass('detailed-defect')
+        const [defect] = await getDetailedDefect(data.Err_c1)
+        $('.table-detailed-defect tbody').append($(`<tr class="active-row"><td>${defect?.Maloi}</td><td>${defect?.Tenloi}</td></tr>`));
+        data.AfterRepairImg.split(',')?.forEach(img => {
+            $('#after_repair_img .current-img').append(`<img src="${img}">`)
         })
-        $('#before_repair_img').trigger('change')
-        repairArea.show()
-        $('.btn-repair').remove()
+        $('#after_repair_img').trigger('change')
+        $('#after_repair_img .img-input').empty().addClass('mb-3');
+        $('#after_repair_img .delete-img').remove();
+        $('#is_stopped_assy').prop('checked', !!data.AssyStop).attr('disabled', true)
+        $('#is_stopped_qa').prop('checked', !!data.Stopline).attr('disabled', true)
+        $('.repairer-note').val(data.repair_note).attr('readonly', true)
     }
 }
+async function getGroupDefectCode(search, offset) {
+    const department = $('.group-defect').data('department')
+    return await getGroupDefect(search, offset, department)
+}
 async function getDetailedDefectOnGroup(search, offset) {
-    const group = $('.table-detailed-defect').find('tbody tr[class="active-row"] td:first').text()
-    if (!group) return [];
-    return await getDetailedDefect(group, search, offset)
+    const group = $('.table-group-defect').find('tbody tr[class="active-row"] td:first').text()
+    return await getDetailedDefect(search, offset, group)
+}
+function onChangeGroupDefect() {
+    $('.table-group-defect tbody').on('click', function () {
+        $('.detailed-defect').trigger('keyup.searchInput')
+    })
 }
 function pickOptionOnGroupDefect() {
     $('.table-group-defect').on('click', 'tbody tr', function () {
@@ -156,6 +185,10 @@ function pickOptionOnDetailedDefect() {
         $(this).addClass('active-row').siblings().removeClass('active-row')
     })
 }
+function switchLineStatus() {
+    if ($(this).prop('checked')) $(this).next().text('Dừng chuyền')
+    else $(this).next().text('Không dừng chuyền')
+}
 function receiveCall() {
     const beforeRepairArea = $(this).parent().next()
     beforeRepairArea.show()
@@ -169,7 +202,7 @@ async function startRepair() {
         displayMode: 'replace'
     });
     const imgIDs = await Promise.all(
-        $('#before_repair_img current-img img').map(async function (index, img) {
+        $('#before_repair_img .current-img img').map(async function (index, img) {
             return await convertIMG(img, `/Images/BeforeRepair`, index)
         }).get()
     )
@@ -179,7 +212,120 @@ async function startRepair() {
     const section = urlParams.get('section');
     const position = urlParams.get('position');
     await updateCallBeforeRepair(+time, line, section, position, imgIDs)
+    $('#before_repair_img .img-input').remove()
     const repairArea = $(this).parent().parent().next()
     repairArea.show()
     $(this).hide()
 }
+async function endRepair() {
+    let hasSelected = $('.table-container').map(function () {
+        return $(this).find('tbody tr').filter(function () {
+            return $(this).hasClass('active-row');
+        }).length > 0;
+    }).get().every(Boolean);
+    if (!hasSelected){
+        return iziToast.error({
+            title: "Lỗi",
+            message: "Vui lòng chọn nhóm/mã lỗi",
+            position: 'topRight',
+            displayMode: 'replace'
+        })
+    }
+    if (!$('#after_repair_img .current-img img').length) return iziToast.error({
+        title: "Lỗi",
+        message: "Vui lòng nhập ảnh trước khi sửa",
+        position: 'topRight',
+        displayMode: 'replace'
+    });
+    const urlParams = new URLSearchParams(window.location.search);
+    const time = urlParams.get('time');
+    const line = urlParams.get('line');
+    const section = urlParams.get('section');
+    const position = urlParams.get('position');
+    const groupCode = $('.table-group-defect tr.active-row td:first').text()
+    const defectCode = $('.table-detailed-defect tr.active-row td:first').text()
+    const imgIDs = await Promise.all(
+        $('#after_repair_img .current-img img').map(async function (index, img) {
+            return await convertIMG(img, `/Images/AfterRepair`, index)
+        }).get()
+    )
+    const note = $('.repairer-note').val()
+    const isStoppedAssy = $('#is_stopped_assy').prop('checked')
+    const isStoppedQA = $('#is_stopped_qa').prop('checked')
+    const finished = await updateCallAfterRepair(time, line, section, position, groupCode, defectCode, imgIDs, note, isStoppedAssy, isStoppedQA)
+    if (!finished) return iziToast.error({
+        title: 'Lỗi',
+        message: 'Xác nhận không thành công',
+        position: 'topRight',
+        displayMode: 'replace'
+    })
+    $('#finalize_modal').modal('show')
+}
+$('#finalize_modal').on('shown.bs.modal', async function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const time = urlParams.get('time');
+    const line = urlParams.get('line');
+    const section = urlParams.get('section');
+    const position = urlParams.get('position');
+
+    const video = document.getElementById("qrcode_scan");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    let stream, currentRequest
+    async function startVideo() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: "environment" },
+            });
+            video.srcObject = stream;
+        } catch (err) {
+            console.error("Error accessing camera: ", err);
+        }
+    }
+    function scanQRCode() {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.height = video.videoHeight;
+            canvas.width = video.videoWidth;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+            if (code?.data && !currentRequest) {
+                currentRequest = finalizeRepair(time, line, section, position, code.data.substring(1, code.data.length - 1))
+                currentRequest.then(() => { window.location.href = "/History/Repair" }, () => { }) // do nothing when rejected since it's caught in ajax call
+            }
+        }
+        requestAnimationFrame(scanQRCode);
+    }
+    startVideo();
+    scanQRCode();
+    $('#qrcode_img').off('change').on('change', function (e) {
+        const file = e.target?.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+                const imageData = ctx.getImageData(0, 0, img.width, img.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                if (code?.data) {
+                    currentRequest = finalizeRepair(time, line, section, position, code.data.substring(1, code.data.length - 1))
+                    currentRequest.then(() => { window.location.href = "/History/Repair" }, () => { })
+                } else {
+                    iziToast.warning({
+                        title: 'Thông báo',
+                        message: 'Mã QR không hợp lệ.',
+                        displayMode: 'once',
+                        position: 'topRight'
+                    })
+                }
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    })
+})

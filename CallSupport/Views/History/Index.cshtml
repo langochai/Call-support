@@ -50,7 +50,7 @@
                             <div class="form-group row mx-auto">
                                 <label class="col-12 my-auto form-label label-header" for="from_date">Từ ngày</label>
                                 <div>
-                                    <input type="date" class="form-control col-7 mx-1" id="from_date">
+                                    <input type="date" class="form-control col-7" id="from_date">
                                 </div>
                             </div>
                         </div>
@@ -58,8 +58,20 @@
                             <div class="form-group row mx-auto">
                                 <label class="col-12 my-auto form-label label-header" for="to_date">Tới ngày</label>
                                 <div>
-                                    <input type="date" class="form-control col-7 mx-1" id="to_date">
+                                    <input type="date" class="form-control col-7" id="to_date">
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-0 p-0">
+                        <div class="col-12">
+                            <div class="form-group row mx-auto">
+                                <label class="col-12 my-auto form-label label-header" for="lines">Trạng thái</label>
+                                <select class="form-control col-7 mx-1" id="repair_status" multiple data-show-selection-as-list="true">
+                                    <option value="0">Đang chờ</option>
+                                    <option value="1">Đang sửa chữa</option>
+                                    <option value="2">Đã xác nhận</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -109,6 +121,22 @@
         <tbody>
         </tbody>
     </table>
+</div>
+<div class="modal" tabindex="-1" id="qr_modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mã QR xác nhận</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="qr_code" class="d-flex justify-content-center my-5"></div>
+            </div>
+            @* <div class="modal-footer"> *@
+                @* <button type="button" class="btn btn-success" id="save_login_qr">Lưu</button> *@
+            @* </div> *@
+        </div>
+    </div>
 </div>
 <script src="~/assets/bundles/enhanced-bootstrap-select/dist/locale/vn-vn.min.js"></script>
 <script src="~/assets/bundles/enhanced-bootstrap-select/dist/jquery.bs-select.min.js"></script>

@@ -8,6 +8,7 @@ request.onupgradeneeded = function (event) {
     objectStore.createIndex('from_dep', 'from_dep', { unique: false });
     objectStore.createIndex('to_dep', 'to_dep', { unique: false });
     objectStore.createIndex('lines', 'lines', { unique: false });
+    objectStore.createIndex('status', 'status', { unique: false });
 };
 
 request.onsuccess = function (event) {
@@ -53,7 +54,7 @@ async function readRecord(username) {
             if (request.result) {
                 resolve(request.result);
             } else {
-                resolve(null);
+                resolve({});
             }
         };
 

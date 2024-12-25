@@ -76,3 +76,6 @@ tbody tr td {
 .info-header{
     color: dodgerblue !important;
 }
+.js-selected-text{
+    color: black !important;
+}

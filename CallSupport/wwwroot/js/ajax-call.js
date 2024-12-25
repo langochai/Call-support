@@ -136,10 +136,10 @@ function getAllDepartments() {
  * @param {number} offset Number of offset
  * @returns {object[]}
  */
-function getDefects(search = '', offset = 0) {
+function getDefects(search = '', offset = 0, department = '') {
     return new Promise(resolve => {
         $.get({
-            url: `/Defects?offset=${+offset}&` + (search ? `search=${search}` : ''),
+            url: `/Defects?offset=${+offset}&department=${department}&` + (search ? `search=${search}` : ''),
             success: data => resolve(data),
             error: err => {
                 console.error(err)
@@ -154,10 +154,10 @@ function getDefects(search = '', offset = 0) {
         })
     })
 }
-function getGroupDefect(search = '', offset = 0) {
+function getGroupDefect(search = '', offset = 0, department = '') {
     return new Promise(resolve => {
         $.get({
-            url: `/GroupDefects?offset=${+offset}&` + (search ? `search=${search}` : ''),
+            url: `/GroupDefects?department=${department}&offset=${+offset}&` + (search ? `search=${search}` : ''),
             success: data => resolve(data),
             error: err => {
                 console.error(err)
@@ -172,10 +172,10 @@ function getGroupDefect(search = '', offset = 0) {
         })
     })
 }
-function getDetailedDefect(groupCode, search = '', offset = 0) {
+function getDetailedDefect(search = '', offset = 0, group = '') {
     return new Promise(resolve => {
         $.get({
-            url: `/DetailedDefects?groupCode=${groupCode}offset=${+offset}&` + (search ? `search=${search}` : ''),
+            url: `/DetailedDefects?group=${group}&offset=${+offset}&` + (search ? `search=${search}` : ''),
             success: data => resolve(data),
             error: err => {
                 console.error(err)
@@ -198,7 +198,7 @@ function getDetailedDefect(groupCode, search = '', offset = 0) {
 function getTools(search = '') {
     return new Promise(resolve => {
         $.get({
-            url: `/Tools` + (search ? `?search=${search}`:''),
+            url: `/Tools` + (search ? `?search=${search}` : ''),
             success: data => resolve(data),
             error: err => {
                 console.error(err)
@@ -223,13 +223,13 @@ function createCall(data, extra = {}) {
     return new Promise(resolve => {
         $.post({
             url: `/Call`,
-            data: {data, extra},
+            data: { data, extra },
             success: result => resolve(result),
             error: err => {
                 console.error(err)
                 iziToast.error({
                     title: 'Lỗi',
-                    message: err.status == 409 ? err.responseText :'Tạo cuộc gọi thất bại',
+                    message: err.status == 409 ? err.responseText : 'Tạo cuộc gọi thất bại',
                     displayMode: 1,
                     position: 'topRight'
                 });
@@ -238,12 +238,12 @@ function createCall(data, extra = {}) {
         })
     })
 }
-function getHistory(fromDate, toDate, fromDep, toDep, lines, offset = '', limit = '') {
+function getHistory(fromDate, toDate, fromDep, toDep, lines, status, offset = '', limit = '') {
     if (fromDep == 'all') fromDep = ''
     if (toDep == 'all') toDep = ''
     return new Promise(resolve => {
         $.get({
-            url: `/History/Data?fromDate=${fromDate}&toDate=${toDate}&fromDep=${fromDep}&toDep=${toDep}&lines=${lines?.join(',')}`,
+            url: `/History/Data?fromDate=${fromDate}&toDate=${toDate}&fromDep=${fromDep}&toDep=${toDep}&lines=${lines}&status=${status}`,
             success: result => resolve(result),
             error: err => {
                 console.error(err)
@@ -303,17 +303,58 @@ function updateCallBeforeRepair(time, line, section, position, imgIDs) {
         })
     })
 }
-function updateCallAfterRepair(time, line, section, position, imgIDs, note) {
-    return new Promise(resolve => {
+function updateCallAfterRepair(time, line, section, position, groupCode, defectCode, imgIDs, note, isStoppedAssy, isStoppedQA) {
+    return new Promise((resolve,reject) => {
         $.post({
             url: `/Repair/EndRepair`,
-            data: { time, line, section, position, imgIDs, note },
+            data: { time, line, section, position, groupCode, defectCode, imgIDs, note, isStoppedAssy, isStoppedQA },
+            success: result => {
+                resolve(true)
+            },
+            error: err => {
+                console.error(err)
+                reject(false)
+            }
+        })
+    })
+}
+function finalizeRepair(time, line, section, position, hashed) {
+    return new Promise((resolve, reject) => {
+        $.post({
+            url: `/Repair/FinalizeRepair`,
+            data: { time, line, section, position, hashed },
+            success: result => {
+                iziToast.success({
+                    title: 'Thông báo',
+                    message: 'Xác nhận thành công',
+                    displayMode: 'once',
+                    position: 'topRight'
+                });
+                resolve(result)
+            },
+            error: err => {
+                console.error(err)
+                iziToast.error({
+                    title: 'Lỗi',
+                    message: err.responseText,
+                    displayMode: 'once',
+                    position: 'topRight'
+                });
+                reject()
+            }
+        })
+    })
+}
+function getQRCode(callingTime, line, section, position) {
+    return new Promise(resolve => {
+        $.get({
+            url: `/History/QRCode?callingTime=${callingTime}&line=${line}&section=${section}&position=${position}`,
             success: result => resolve(result),
             error: err => {
                 console.error(err)
                 iziToast.error({
                     title: 'Lỗi',
-                    message: 'Cập nhật dữ liệu lịch sử thất bại',
+                    message: 'Xác thực thất bại',
                     displayMode: 1,
                     position: 'topRight'
                 });

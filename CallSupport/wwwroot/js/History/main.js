@@ -2,6 +2,7 @@
     await loadDepartments();
     await loadLinecodes();
     await loadDateInput();
+    await loadRepairStatus();
     await loadHistoryData();
     $('.refresh-history').on('click', loadHistoryData)
     displayPrettier()
@@ -16,14 +17,15 @@ async function loadLinecodes() {
     $('#lines').on('change.bs.select', async function () {
         const username = $('#UserName').val()
         const settings = await readRecord(username);
-        if (settings) {
+        if (!$.isEmptyObject(settings)) {
             await updateRecord({ ...settings, lines: $('#lines').val() });
         } else {
             await createRecord({
                 username: username,
                 from_dep: $('#from_department').val(),
                 to_dep: $('#to_department').val(),
-                lines: $('#lines').val()
+                lines: $('#lines').val(),
+                status: $('#repair_status').val(),
             });
         }
     }).bsSelect({
@@ -48,7 +50,7 @@ async function loadDepartments() {
     $('#from_department,#to_department').on('change.bs.select', async function () {
         const username = $('#UserName').val()
         const settings = await readRecord(username);
-        if (settings) {
+        if (!$.isEmptyObject(settings)) {
             await updateRecord({
                 ...settings,
                 from_dep: $('#from_department').val(),
@@ -59,7 +61,8 @@ async function loadDepartments() {
                 username: username,
                 from_dep: $('#from_department').val(),
                 to_dep: $('#to_department').val(),
-                lines: $('#lines').val()
+                lines: $('#lines').val(),
+                status: $('#repair_status').val(),
             });
         }
     }).bsSelect({
@@ -87,15 +90,41 @@ function loadDateInput() {
         loadHistoryData()
     });
 }
+async function loadRepairStatus() {
+    $('#repair_status').on('change.bs.select', async function () {
+        const username = $('#UserName').val()
+        const settings = await readRecord(username);
+        if (!$.isEmptyObject(settings)) {
+            await updateRecord({ ...settings, status: $('#repair_status').val() });
+        } else {
+            await createRecord({
+                username: username,
+                from_dep: $('#from_department').val(),
+                to_dep: $('#to_department').val(),
+                lines: $('#lines').val(),
+                status: $('#repair_status').val(),
+            });
+        }
+    }).bsSelect({
+        btnWidth: '',
+        btnClass: 'btn-outline-secondary w-100 text-decoration-none',
+        btnEmptyText: 'Chọn trạng thái sửa',
+        dropDownListHeight: 300,
+        showSelectionAsList: true,
+    })
+    const { status } = await readRecord($('#UserName').val());
+    $('#repair_status').bsSelect('val', status)
+}
 async function loadHistoryData() {
     try {
         const fromDate = $('#from_date').val()
         const toDate = $('#to_date').val()
         const fromDep = $('#from_department').val()
         const toDep = $('#to_department').val()
-        const lines = $('#lines').val()
+        const lines = $('#lines').val().join(',')
+        const status = $('#repair_status').val().join(',')
         iziToast.success({ title: "Loading...", message: "Đang tải dữ liệu", position: 'topRight', displayMode: 'once', timeout: 30000 })
-        const data = await getHistory(fromDate, toDate, fromDep, toDep, lines)
+        const data = await getHistory(fromDate, toDate, fromDep, toDep, lines, status)
         const tbody = $('tbody')
         tbody.empty()
         data.forEach(d => {
@@ -240,6 +269,11 @@ async function showCallDetails() {
                     <td colspan="2"><span class="info-header">Loại lỗi</span>: ${details.tenloi}</td>
                 </tr>
                 <tr>
+                    <td colspan="2">
+                        <span class="info-header">Trạng thái chuyền</span>: ${details.Status_line ? 'Dừng chuyền' : 'Đang chạy'}
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2"><span class="info-header">Người sửa</span><span class='rep-name'>: ${details.RepairerName ?? ''}</span></td>
                 </tr>
                 <tr>
@@ -261,7 +295,7 @@ async function showCallDetails() {
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2"><span class="info-header">TG Xác nhận</span>: <span class="confirm-time">${confirmTime}</span></td>
+                    <td colspan="2"><span class="info-header">TG Hoàn thành</span>: <span class="confirm-time">${confirmTime}</span></td>
                 </tr>
             </table>`
         )
@@ -271,18 +305,12 @@ async function showCallDetails() {
         if (!details.Confirm_time) {
             $table.find('.repair-duration').data('data-interval', setInterval(() => updateTimeSpan($table.find('.repair-duration')), 1000))
         }
-        const $moveToRepair = $(
-            `<a href="/Repair/Details?time=${new Date(details.Calling_time).getTime()}&line=${details.Line_c}&section=${details.Sec_c}&position=${details.Pos_c}"
-                    class="btn btn-success me-1 btn-repair">
-                Sửa chữa
-            </a>`
-        )
-        const $askBrosForHelp = $(`<button class="btn btn-info">Chuyển tiếp</button>`)
-        $askBrosForHelp.off('click').on('click', () =>
-            signalConn?.invoke("SendMessage", user, message).catch(function (err) { return console.error(err.toString()) })
-        )
+        const $moveToRepair = createRepairButton(details)
+        const $askBrosForHelp = createForwardRepairersButton(details)
+        const $generateQR = createQRButton(details)
         $container.append($table)
-        if (!isCaller && $('#Department').val() == details.ToDep_c) $container.append($moveToRepair).append($askBrosForHelp);
+        if (!isCaller && $('#Department').val() == details.ToDep_c && !details.Finish_time) $container.append($moveToRepair).append($askBrosForHelp);
+        if (isCaller && $('#Department').val() == details.Dep_c && !details.Finish_time) $container.append($generateQR)
         $detailRow.append($container)
         $row.after($detailRow)
         $container.slideDown('fast')
@@ -298,6 +326,36 @@ function getRowClassName(statusCalling) {
     if (statusCalling == 0) return "waiting"
     if (statusCalling == 1) return "repairing"
     if (statusCalling == 2) return "finished"
+}
+function createRepairButton(details) {
+    return $(
+        `<a href="/Repair/Details?time=${new Date(details.Calling_time).getTime()}&line=${details.Line_c}&section=${details.Sec_c}&position=${details.Pos_c}"
+                    class="btn btn-success me-1 btn-repair">
+                Sửa chữa
+            </a>`
+    )
+}
+function createForwardRepairersButton(details) {
+    const button = $(`<button class="btn btn-info">Chuyển tiếp</button>`)
+    button.on('click', () =>
+        signalConn?.invoke("SendMessage", user, message)
+            .catch(err => console.error(err))
+    )
+    return button
+}
+function createQRButton(details) {
+    const button = $(`<button class="btn btn-primary">Tạo QR</button>`)
+    button.on('click', async function () {
+        const data = await getQRCode(details.Calling_time, details.Line_c, details.Sec_c, details.Pos_c)
+        $('#qr_code').empty()
+        new QRCode(document.getElementById("qr_code"), {
+            text: JSON.stringify(data),
+            width: 330,
+            height: 330,
+        });
+        $('#qr_modal').modal('show')
+    })
+    return button
 }
 function isWithinDateRange(dateString) {
     const date = new Date(dateString);

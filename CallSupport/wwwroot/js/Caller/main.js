@@ -3,7 +3,8 @@
     loadData('#lines', getLines, ['LineC', 'LineNm'])
     loadData('#sections', getSections, ['SecC', 'SecNm'])
     loadData('#departments', getDepartments, ['DepC', 'DepNm'])
-    loadData('#defects', getDefects, ['Maloi', 'Tenloi'])
+    $('#departments').parent().next().find('table tbody').on('click', () => $('#defects').trigger('keyup.searchInput'))
+    loadData('#defects', getDefectsFromDepartment, ['Maloi', 'Tenloi'])
     createCarousel()
     displayTools()
     $('#tools').searchInput(displayTools, 200) // fn.searchInput(callback, timeout = 350)
@@ -78,13 +79,14 @@ function createCarousel() {
             $('#defect_img').val('')
         }
     })
-    //$('.current-img').on('click', 'img', function () {
-    //    convertIMG(this, '/Images/Defect')
-    //})
     updateCarousel()
     $(window).on('resize', function () {
         updateCarousel();
     });
+}
+async function getDefectsFromDepartment(search, offset) {
+    const department = $('#departments').parent().next().find('tbody tr[class="active-row"] td:first').text()
+    return getDefects(search, offset, department)
 }
 async function displayTools() {
     try {
@@ -128,7 +130,7 @@ function pickOptionOnTable() {
     })
 }
 function validateData() {
-    let isVeryVeryOK = true
+    let isOK = true
     let hasSelected = $('.table').map(function () {
         return $(this).find('tbody tr').filter(function () {
             return $(this).hasClass('active-row');
@@ -138,13 +140,13 @@ function validateData() {
     let hasImg = $('.current-img img').length > 0
     if (!hasSelected) {
         iziToast.warning({ title: 'Thông báo', message: 'Vui lòng điền đủ thông tin', displayMode: 'replace', position: 'topRight' })
-        isVeryVeryOK = false
+        isOK = false
     }
     if (!hasImg) {
         iziToast.warning({ title: 'Thông báo', message: 'Vui lòng chụp ảnh lỗi', displayMode: 'replace', position: 'topRight' })
-        isVeryVeryOK = false
+        isOK = false
     }
-    return isVeryVeryOK
+    return isOK
 }
 async function submitData() {
     if (!validateData()) return;
@@ -167,7 +169,7 @@ async function submitData() {
             PosC: $('#positions').parent().next().find('tbody tr[class="active-row"] td:first').text(),
             ToDepC: $('#departments').parent().next().find('tbody tr[class="active-row"] td:first').text(),
             ErrC: $('#defects').parent().next().find('tbody tr[class="active-row"] td:first').text(),
-            StatusLine: $('.footer .btn').index(this).toString(),
+            StatusLine: !!$('.footer .btn').index(this),
         }
         const result = await createCall(data, { Tools, Images, Note })
         if (result) {
@@ -181,9 +183,12 @@ async function submitData() {
     }
 }
 function clearPage() {
-    $('.table-container tr').removeClass('active-row')
-    $('#tools-display div').removeClass('picked-tool')
-    $('.current-img img').remove()
-    $('.current-img').trigger('change')
-    $('textarea').val('')
+    window.location.reload()
+    //$('.table-container tr').removeClass('active-row')
+    //$('#positions,#lines,#sections,#departments,#defects').parent().next().find('tbody').cleanupScrollTable()
+    //$('#positions,#lines,#sections,#departments,#defects').val('').triger('keyup')
+    //$('#tools-display div').removeClass('picked-tool')
+    //$('.current-img img').remove()
+    //$('.current-img').trigger('change')
+    //$('textarea').val('')
 }

@@ -1,5 +1,5 @@
 ﻿{
   "ConnectionStrings": {
-    "DefaultConnection": "Server=DESKTOP-QT9QRF0;Database=CallASSYDB;User Id=sa;Password=1;TrustServerCertificate=True;Integrated Security=True"
+    "DefaultConnection": "Server=DESKTOP-QT9QRF0;Database=CallASSYDB;User Id=sa;Password=1;TrustServerCertificate=True;"
   }
 }

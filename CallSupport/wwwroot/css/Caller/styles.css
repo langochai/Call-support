@@ -103,3 +103,8 @@
 	height: 160px;
 	cursor: pointer;
 }
+@media (min-width: 992px){
+	.tools-options {
+		height: 200px;
+	}
+}
