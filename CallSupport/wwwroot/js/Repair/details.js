@@ -212,7 +212,7 @@ async function startRepair() {
     const section = urlParams.get('section');
     const position = urlParams.get('position');
     await updateCallBeforeRepair(+time, line, section, position, imgIDs)
-    $('#before_repair_img .img-input').remove()
+    $('#before_repair_img .img-input').empty().addClass('mb-3');
     const repairArea = $(this).parent().parent().next()
     repairArea.show()
     $(this).hide()

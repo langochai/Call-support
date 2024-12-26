@@ -50,6 +50,8 @@ namespace CallSupport.Models.DTO
         public string Pos_nm { get; set; }
         public string Dep_nm { get; set; }
         public string tenloi { get; set; }
+        public string tenloiChiTiet { get; set; }
+        public string CallerName { get; set; }
         public string RepairerName { get; set; }
         public string ConfirmName { get; set; }
     }

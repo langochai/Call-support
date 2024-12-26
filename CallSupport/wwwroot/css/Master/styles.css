@@ -82,3 +82,100 @@
 .preview{
 	max-height: 350px;
 }
+.label-header {
+	color: dodgerblue;
+}
+
+.status-showcase {
+	font-size: 18px;
+	font-weight: bold;
+	color: white;
+}
+
+	.status-showcase.red {
+		background: orangered;
+	}
+
+	.status-showcase.yellow {
+		background: yellow;
+		color: black;
+	}
+
+	.status-showcase.green {
+		background: limegreen;
+	}
+
+input[type="date"] {
+	border: 1px solid #6c757d
+}
+
+td.text-wrap {
+	text-align: center;
+	height: 100px;
+	cursor: pointer;
+}
+
+.table-history {
+	min-width: 636px
+}
+
+tbody tr td {
+	font-weight: bold;
+	vertical-align: middle;
+	transition: background-color 1s ease, color 1s ease;
+}
+
+tbody tr.waiting td {
+	--bg-color: orangered;
+	--text-color: white;
+	background-color: var(--bg-color);
+	color: var(--text-color);
+}
+
+tbody tr.repairing td {
+	--bg-color: yellow;
+	--text-color: black;
+	background-color: var(--bg-color);
+	color: var(--text-color);
+}
+
+tbody tr.finished td {
+	--bg-color: limegreen;
+	--text-color: white;
+	background-color: var(--bg-color);
+	color: var(--text-color);
+}
+
+tbody td.flashing {
+	animation: flash 1s infinite alternate;
+}
+
+@keyframes flash {
+	0% {
+		background-color: var(--bg-color);
+		color: var(--text-color);
+	}
+
+	50% {
+		background-color: darkred;
+		color: white;
+	}
+
+	100% {
+		background-color: var(--bg-color);
+		color: var(--text-color);
+	}
+}
+
+.line-stop {
+	background-color: darkred !important;
+	color: white !important;
+}
+
+.info-header {
+	color: dodgerblue !important;
+}
+
+.js-selected-text {
+	color: black !important;
+}

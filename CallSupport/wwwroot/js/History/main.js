@@ -246,6 +246,8 @@ async function showCallDetails() {
     if ($row.hasClass('expand')) {
         const rowData = $row.data('data')
         const [details] = await getHistoryDetails(rowData.Calling_time, rowData.Line_c, rowData.Sec_c, rowData.Pos_c)
+        if (!details) return iziToast.error({ title: "Lỗi", message: "Đã có lỗi xảy ra", position: 'topRight', displayMode: 'replace' });
+        console.log(details);
         const callTime = details.Calling_time != null ? toVNDateTime(details.Calling_time) : ''
         const repairTime = details.Repairing_time != null ? toVNDateTime(details.Repairing_time) : ''
         const confirmTime = details.Confirm_time != null ? toVNDateTime(details.Confirm_time) : ''

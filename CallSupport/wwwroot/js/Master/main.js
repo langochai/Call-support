@@ -3,6 +3,13 @@
     $('#tools').searchInput(displayTools, 200)
     $('.btn-add').on('click', () => openModal())
     displaySidebar()
+    await loadDepartments();
+    await loadLinecodes();
+    await loadDateInput();
+    await loadRepairStatus();
+    await loadHistoryData();
+    $('.refresh-history').on('click', loadHistoryData)
+    $('.export-excel').on('click', exportExcel)
 })
 async function displayTools() {
     try {
@@ -151,3 +158,146 @@ $('.btn-delete').on('click', function () {
     })
     $('#modal_input').modal('hide')
 })
+async function loadLinecodes() {
+    const linesData = await getAllLines()
+    $('#lines').empty()
+    linesData.forEach(l => {
+        const option = $(`<option value="${l.LineC}">${l.LineC}-${l.LineNm}</option>`)
+        $('#lines').append(option)
+    })
+    $('#lines').bsSelect({
+        btnWidth: '',
+        btnClass: 'btn-outline-secondary w-100 text-decoration-none',
+        btnEmptyText: 'Chọn dây chuyền',
+        dropDownListHeight: 300,
+        //debug: true,
+        showSelectionAsList: true,
+    })
+}
+async function loadDepartments() {
+    const departments = await getAllDepartments()
+    $('#from_department,#to_department').empty()
+    $('#from_department,#to_department').append($(`<option value='all'>Tất cả</option>`))
+    departments.forEach(d => {
+        const option = $(`<option value="${d.DepC}">${d.DepC} - ${d.DepNm}</option>`)
+        $('#from_department,#to_department').append(option)
+    })
+    $('#from_department,#to_department').bsSelect({
+        btnWidth: '',
+        btnClass: 'btn-outline-secondary w-100 text-decoration-none',
+        btnEmptyText: 'Chọn bộ phận',
+        dropDownListHeight: 300,
+        //debug: true,
+    })
+}
+function loadDateInput() {
+    $('#from_date').each(function () {
+        let date = new Date();
+        date.setDate(date.getDate() - 1);
+        this.valueAsDate = date;
+    });
+    $('#to_date').each(function () {
+        this.valueAsDate = new Date();
+    });
+    $('input[type="date"]').on('change', function () {
+        if (!this.value) this.valueAsDate = new Date();
+        loadHistoryData()
+    });
+}
+async function loadRepairStatus() {
+    $('#repair_status').bsSelect({
+        btnWidth: '',
+        btnClass: 'btn-outline-secondary w-100 text-decoration-none',
+        btnEmptyText: 'Chọn trạng thái sửa',
+        dropDownListHeight: 300,
+        showSelectionAsList: true,
+    })
+}
+async function loadHistoryData() {
+    try {
+        const fromDate = $('#from_date').val()
+        const toDate = $('#to_date').val()
+        const fromDep = $('#from_department').val()
+        const toDep = $('#to_department').val()
+        const lines = $('#lines').val().join(',')
+        const status = $('#repair_status').val().join(',')
+        iziToast.success({ title: "Loading...", message: "Đang tải dữ liệu", position: 'topRight', displayMode: 'once', timeout: 30000 })
+        const data = await getHistory(fromDate, toDate, fromDep, toDep, lines, status)
+        const tbody = $('tbody')
+        tbody.empty()
+        data.forEach(d => {
+            const lineStoppedClass = d.Status_line ? ('line-stop') : '';
+            const row = $(`<tr class="${getRowClassName(d.Status_calling)} display-row"></tr>`)
+            row.append($(`<td class="text-wrap text-break">${d.Line_c}</td>`))
+            row.append($(`<td class="text-wrap text-break">${d.Line_nm}</td>`))
+            row.append($(`<td class="text-wrap text-break">${d.Sec_nm}</td>`))
+            row.append($(`<td class="text-wrap text-break">${d.Pos_nm}</td>`))
+            row.append($(`<td class="text-wrap text-break">${d.ToDep_c}</td>`))
+            row.append($(`<td class="text-wrap text-break ${lineStoppedClass}">${d.tenloi}</td>`))
+            row.append($(`<td class="text-wrap text-break">${toVNDateTime(d.Calling_time)}</td>`))
+            row.data('data', d)
+            tbody.append(row)
+        })
+    }
+    catch (err) {
+        console.error(err)
+        iziToast.error({ title: "Lỗi", message: "Load dữ liệu thất bại", position: 'topRight', displayMode: 'once', timeout: 30000 })
+    }
+    finally {
+        var toast = document.querySelector('.iziToast');
+        iziToast.hide({}, toast);
+    }
+}
+function getRowClassName(statusCalling) {
+    if (statusCalling == 0) return "waiting"
+    if (statusCalling == 1) return "repairing"
+    if (statusCalling == 2) return "finished"
+}
+async function exportExcel() {
+    let fromDate = $('#from_date').val()
+    let toDate = $('#to_date').val()
+    let fromDep = $('#from_department').val()
+    let toDep = $('#to_department').val()
+    let lines = $('#lines').val().join(',')
+    let status = $('#repair_status').val().join(',')
+    if (fromDep == 'all') fromDep = ''
+    if (toDep == 'all') toDep = ''
+    iziToast.show({
+        color: 'green',
+        id: 'toast_download',
+        message: 'Đang tải xuống...',
+        close: false,
+        closeOnEscape: false,
+        closeOnClick: false,
+        displayMode: 'once',
+        position: 'topRight',
+        progressBar: false,
+        timeout: 1000000,
+    })
+    const toast = document.querySelector('#toast_download')
+    const a = document.createElement('a');
+    fetch(`/Master/ExportExcel?fromDate=${fromDate}&toDate=${toDate}&fromDep=${fromDep}&toDep=${toDep}&lines=${lines}&status=${status}`)
+        .then(async response => {
+            if (!response.ok) {
+                const text = await response.text()
+                throw new Error(text)
+            }
+            let filename = `Lịch sử gọi ${(new Date()).toISOString().substring(0, 10)}.xlsx`; // Default filename
+            a.download = filename;
+            return response.blob();
+        })
+        .then(blob => {
+            iziToast.hide({}, toast);
+            const url = window.URL.createObjectURL(blob);
+            a.href = url;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        })
+        .catch(err => {
+            console.error(err);
+            iziToast.error({ title: err.message ?? 'Đã có lỗi xảy ra, vui lòng thử lại', position: 'topRight' });
+            iziToast.hide({}, toast);
+        });
+}

@@ -1,5 +1,5 @@
 ﻿<link href="~/css/Master/styles.css" rel="stylesheet" />
-<section id="Tools">
+<section id="Tools" class="mb-3">
     <h3>Quản lý dụng cụ</h3>
     <hr />
     <div class="mb-2">
@@ -7,12 +7,114 @@
         <button class="btn btn-info"><i class="fas fa-search"></i>  Tìm kiếm</button>
         <button class="btn btn-success btn-add"><i class="fas fa-plus"></i>  Thêm mới</button>
     </div>
-    <!--<div class="container m-0 p-0 bg-light">-->
     <div id="tools-container">
         <div class="row m-0 bg-light" id="tools-display">
         </div>
     </div>
-    <!--</div>-->
+</section>
+<section id="History" class="mb-3">
+    <h3>Lịch sử gọi</h3>
+    <hr />
+    <div class="mb-2">
+        <div class="row m-0 p-0 mb-3">
+            <div class="col-12 col-md-6">
+                <div class="form-group row mx-auto">
+                    <label class="col-12 my-auto form-label label-header" for="from_department">Từ bộ phận</label>
+                    <select class="form-control col-7 mx-1" id="from_department">
+                    </select>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group row mx-auto">
+                    <label class="col-12 my-auto form-label label-header" for="to_department">Tới bộ phận</label>
+                    <select class="form-control col-7 mx-1" id="to_department">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row m-0 p-0 mb-3">
+            <div class="col-12">
+                <div class="form-group row mx-auto">
+                    <label class="col-12 my-auto form-label label-header" for="lines">Dây chuyền</label>
+                    <select class="form-control col-7 mx-1" id="lines" multiple data-show-selection-as-list="true">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row m-0 p-0 mb-3">
+            <div class="col-12 col-md-6">
+                <div class="form-group row mx-auto">
+                    <label class="col-12 my-auto form-label label-header" for="from_date">Từ ngày</label>
+                    <div>
+                        <input type="date" class="form-control col-7" id="from_date">
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group row mx-auto">
+                    <label class="col-12 my-auto form-label label-header" for="to_date">Tới ngày</label>
+                    <div>
+                        <input type="date" class="form-control col-7" id="to_date">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row m-0 p-0 mb-3">
+            <div class="col-12">
+                <div class="form-group row mx-auto">
+                    <label class="col-12 my-auto form-label label-header" for="lines">Trạng thái</label>
+                    <select class="form-control col-7 mx-1" id="repair_status" multiple data-show-selection-as-list="true">
+                        <option value="0">Đang chờ</option>
+                        <option value="1">Đang sửa chữa</option>
+                        <option value="2">Đã xác nhận</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row m-0 p-0 mb-3">
+            <div class="col-12 col-md-6 d-flex justify-content-center">
+                <div class="btn btn-primary refresh-history">
+                    <span><i class="fa-solid fa-arrows-rotate"></i></span> <span>Làm mới</span>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 d-flex justify-content-center">
+                <div class="btn btn-success export-excel">
+                    <span><i class="fa-solid fa-file-arrow-down"></i></span> <span>Xuất excel</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="mb-2 table-responsive-sm">
+        <table class="table table-bordered table-hover table-history" style="table-layout:fixed">
+            <colgroup>
+                <col style="width:10%" />
+                <col style="width:15%" />
+                <col style="width:15%" />
+                <col style="width:10%" />
+                <col style="width:10%" />
+                <col style="width:15%" />
+                <col style="width:15%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="text-center text-wrap text-break align-middle info-header">Mã dây chuyền</th>
+                    <th class="text-center text-wrap text-break align-middle info-header">Tên dây chuyền</th>
+                    <th class="text-center text-wrap text-break align-middle info-header">Công đoạn</th>
+                    <th class="text-center text-wrap text-break align-middle info-header">Vị trí</th>
+                    <th class="text-center text-wrap text-break align-middle info-header">Gọi bộ phận</th>
+                    <th class="text-center text-wrap text-break align-middle info-header">Lỗi</th>
+                    <th class="text-center text-wrap text-break align-middle info-header">TG gọi</th>
+                    @* <th>TG chờ</th> *@
+                    @* <th>TG sửa</th> *@
+                    @* <th>TG xác nhận</th> *@
+                    @* <th>TT chuyền</th> *@
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </section>
 <div class="modal fade" id="modal_input" tabindex="-1" aria-labelledby="modal_input" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
@@ -43,6 +145,8 @@
         </div>
     </div>
 </div>
+<script src="~/assets/bundles/enhanced-bootstrap-select/dist/locale/vn-vn.min.js"></script>
+<script src="~/assets/bundles/enhanced-bootstrap-select/dist/jquery.bs-select.min.js"></script>
 <script src="~/js/convert-img-to-blob.js"></script>
 <script src="~/js/ajax-call.js"></script>
 <script src="~/js/Master/main.js"></script>
