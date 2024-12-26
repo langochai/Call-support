@@ -1,20 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.IO;
 using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
 using CallSupport.Hubs;
 using Microsoft.AspNetCore.Http.Features;
 
@@ -35,6 +29,7 @@ namespace CallSupport
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation(); ;
+            services.AddSingleton<ConnectionMapping>();
             services.AddSignalR();
             services.AddSingleton<SqlDependencyService>();
             //Session
@@ -148,7 +143,7 @@ namespace CallSupport
             app.UseCors("LinecodeSupport");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            //app.UseStaticFiles(new StaticFileOptions
+            //app.UseStaticFiles(new StaticFileOptions // uncomment this if you need clients to refetch static files
             //{
             //    OnPrepareResponse = context => {
             //        context.Context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";

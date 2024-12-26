@@ -23,8 +23,6 @@ namespace CallSupport.Controllers
         [Route("/Tools")]
         public IActionResult Get(string search)
         {
-            var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
-            if (!user.IsMaster) return Unauthorized("Bạn không có quyền truy cập");
             var toolsRepo = new ToolsRepo();
             var tools = toolsRepo.Find(t => EF.Functions.Like(t.ToolNm, $"%{search}%"));
             return Json(tools, new System.Text.Json.JsonSerializerOptions());

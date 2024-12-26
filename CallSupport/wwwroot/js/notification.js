@@ -2,7 +2,7 @@
 $(() => {
     const UserName = $('#UserName').val();
     const Department = $('#Department').val();
-    const IsCaller = $('#IsCaller').prop('checked');
+    const IsCaller = !!$('#is_caller').prop('checked');
     signalConn = new signalR.HubConnectionBuilder()
         .withUrl(`/notificationHub?UserName=${UserName}&Department=${Department}&IsCaller=${IsCaller}`)
         .withAutomaticReconnect()
@@ -18,6 +18,9 @@ $(() => {
         const inserted = data.Inserted === null ? '' : xmlToObject(insertXMLDoc.documentElement);
         const deleted = data.Deleted === null ? '' : xmlToObject(deleteXMLDoc.documentElement);
         refreshHistory?.(data.NotificationType, inserted, deleted) // null properties will be omitted
+    });
+    signalConn.on("ReplyBro", (lineCode) => {
+        updateLineCodeFromBro(lineCode)
     });
     signalConn.on("Error", (error) => {
         console.error(error)

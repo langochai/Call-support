@@ -1,5 +1,4 @@
-﻿using CallSupport.Models.DTO;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
@@ -8,58 +7,56 @@ namespace CallSupport.Hubs
 {
     public class NotificationHub : Hub
     {
-        private readonly ConnectionMapping _users = new ConnectionMapping();
+        private readonly ConnectionMapping _users;
+
+        public NotificationHub(ConnectionMapping users)
+        {
+            _users = users; // Inject the singleton ConnectionMapping instance
+        }
 
         public override async Task OnConnectedAsync()
         {
-            var user = GetUser(Context.GetHttpContext());
-            _users.Add(user, Context.ConnectionId);
+            var data = GetConnectionData(Context.GetHttpContext());
+            _users.Add(Context.ConnectionId, data);
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var user = GetUser(Context.GetHttpContext());
-            _users.Remove(user, Context.ConnectionId);
+            _users.Remove(Context.ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
 
-        [HubMethodName("CallSupport")]
-        public async Task SendMessageToDepartment(UserInfo fromUser, string toDepartment)
+        [HubMethodName("CallBro")]
+        public async Task CallBro(string lineCode, string toDepartment)
         {
-            var connections = _users.GetConnections(new UserInfo { Department = toDepartment, IsCaller = false });
+            var connections = _users.GetConnections(toDepartment, false);
             foreach (var connectionId in connections)
             {
-                await Clients.Client(connectionId).SendAsync("ReceiveMessage", fromUser);
+                await Clients.Client(connectionId).SendAsync("ReplyBro", lineCode);
             }
         }
 
-        [HubMethodName("Repair")]
-        public async Task ReplyToSpecificUser(UserInfo fromUser, string toUserName)
+        [HubMethodName("DebugConnections")]
+        public void DebugConnections()
         {
-            var connections = _users.GetConnections(new UserInfo { UserName = toUserName, IsCaller = true });
-            foreach (var connectionId in connections)
+            foreach (var connection in _users.GetAllConnections())
             {
-                await Clients.Client(connectionId).SendAsync("ReceiveMessage", fromUser);
+                Console.WriteLine($"ConnectionId={connection.ConnectionId}, UserName={connection.Data.UserName}, Department={connection.Data.Department}, IsCaller={connection.Data.IsCaller}");
             }
         }
 
-        #region Utilities
-
-        private static UserInfo GetUser(HttpContext context)
+        private static ConnectionData GetConnectionData(HttpContext context)
         {
-            string UserName = context.Request.Query["UserName"];
-            string Department = context.Request.Query["Department"];
-            string IsCaller = context.Request.Query["IsCaller"];
-            var User = new UserInfo
+            string userName = context.Request.Query["UserName"];
+            string department = context.Request.Query["Department"];
+            string isCaller = context.Request.Query["IsCaller"];
+            return new ConnectionData
             {
-                UserName = UserName,
-                Department = Department,
-                IsCaller = Convert.ToBoolean(IsCaller)
+                UserName = userName,
+                Department = department,
+                IsCaller = Convert.ToBoolean(isCaller)
             };
-            return User;
         }
-
-        #endregion Utilities
     }
 }

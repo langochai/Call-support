@@ -337,10 +337,11 @@ function createRepairButton(details) {
 }
 function createForwardRepairersButton(details) {
     const button = $(`<button class="btn btn-info">Chuyển tiếp</button>`)
-    button.on('click', () =>
-        signalConn?.invoke("SendMessage", user, message)
+    button.on('click', () => {
+        signalConn?.invoke("CallBro", details.Line_c, details.ToDep_c)
             .catch(err => console.error(err))
-    )
+        iziToast.success({ title: "Thông báo", message: "Chuyển tiếp thành công", position: 'topRight', displayMode: 'once' })
+    })
     return button
 }
 function createQRButton(details) {
@@ -392,4 +393,18 @@ function displayPrettier() { // for visual only
         .on('mouseleave', function () {
             $(this).find('i').removeClass('fa-spin')
         })
+}
+function updateLineCodeFromBro(lineCode) {
+    console.log(lineCode);
+    const lines = $('#lines').val()
+    if (!lines.length || lines.includes(lineCode)) return;
+    $('#lines').bsSelect('val', [...lines, lineCode])
+    $('#lines').trigger('change.bs.select')
+    $('.refresh-history').trigger('click')
+    iziToast.success({
+        title: 'Thông báo',
+        message: 'Một dây chuyền đã được chuyển tiếp tới bạn',
+        position: 'topRight',
+        timeout: 120000,
+    })
 }

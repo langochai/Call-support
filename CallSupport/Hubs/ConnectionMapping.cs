@@ -1,5 +1,4 @@
-﻿using CallSupport.Models.DTO;
-using System;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,82 +6,38 @@ namespace CallSupport.Hubs
 {
     public class ConnectionMapping
     {
-        private readonly Dictionary<UserInfo, HashSet<string>> _connections =
-            new Dictionary<UserInfo, HashSet<string>>();
+        private readonly ConcurrentDictionary<string, ConnectionData> _connections =
+            new ConcurrentDictionary<string, ConnectionData>();
 
-        public int Count
+        public int Count => _connections.Count;
+
+        public void Add(string connectionId, ConnectionData data)
         {
-            get
-            {
-                return _connections.Count;
-            }
+            _connections[connectionId] = data; // Add or update the connection with its associated data
         }
 
-        public void Add(UserInfo key, string connectionId)
+        public void Remove(string connectionId)
         {
-            lock (_connections)
-            {
-                HashSet<string> connections;
-                if (!_connections.TryGetValue(key, out connections))
-                {
-                    connections = new HashSet<string>();
-                    _connections.Add(key, connections);
-                }
-
-                lock (connections)
-                {
-                    connections.Add(connectionId);
-                }
-            }
+            _connections.TryRemove(connectionId, out _);
         }
 
-        public void Remove(UserInfo key, string connectionId)
+        public List<string> GetConnections(string department, bool isCaller)
         {
-            lock (_connections)
-            {
-                HashSet<string> connections;
-                if (!_connections.TryGetValue(key, out connections))
-                {
-                    return;
-                }
-
-                lock (connections)
-                {
-                    connections.Remove(connectionId);
-
-                    if (connections.Count == 0)
-                    {
-                        _connections.Remove(key);
-                    }
-                }
-            }
+            return _connections
+                .Where(kv => kv.Value.Department == department && kv.Value.IsCaller == isCaller)
+                .Select(kv => kv.Key).ToList();
         }
 
-        public IEnumerable<string> GetConnections(UserInfo key)
+        public IEnumerable<(string ConnectionId, ConnectionData Data)> GetAllConnections()
         {
-            var matchedConnections = _connections
-                .Where(kv => MatchUserInfo(kv.Key, key))
-                .SelectMany(kv => kv.Value);
-
-            return matchedConnections.Any() ? matchedConnections : Enumerable.Empty<string>();
+            return _connections.Select(kv => (kv.Key, kv.Value));
         }
+    }
 
-        #region Match User Info
-
-        private bool MatchUserInfo(UserInfo stored, UserInfo query)
-        {
-            if (!string.IsNullOrEmpty(query.UserName) && !stored.UserName.Equals(query.UserName, StringComparison.OrdinalIgnoreCase))
-                return false;
-
-            if (!string.IsNullOrEmpty(query.Department) && !stored.Department.Equals(query.Department, StringComparison.OrdinalIgnoreCase))
-                return false;
-
-            if (query.IsCaller != stored.IsCaller)
-                return false;
-
-            return true;
-        }
-
-        #endregion Match User Info
+    public class ConnectionData
+    {
+        public string UserName { get; set; }
+        public string Department { get; set; }
+        public bool IsCaller { get; set; }
     }
 }
