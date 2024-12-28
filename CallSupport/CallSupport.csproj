@@ -31,6 +31,7 @@
     <Folder Include="wwwroot\uploads\Caller\Defect\" />
     <Folder Include="wwwroot\uploads\Repair\After\" />
     <Folder Include="wwwroot\uploads\Repair\Before\" />
+    <Folder Include="wwwroot\uploads\Tools\" />
   </ItemGroup>
 
 </Project>

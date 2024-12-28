@@ -137,15 +137,15 @@ function validateData() {
         }).length > 0;
     }).get().every(Boolean);
 
-    let hasImg = $('.current-img img').length > 0
+    //let hasImg = $('.current-img img').length > 0
     if (!hasSelected) {
         iziToast.warning({ title: 'Thông báo', message: 'Vui lòng điền đủ thông tin', displayMode: 'replace', position: 'topRight' })
         isOK = false
     }
-    if (!hasImg) {
-        iziToast.warning({ title: 'Thông báo', message: 'Vui lòng chụp ảnh lỗi', displayMode: 'replace', position: 'topRight' })
-        isOK = false
-    }
+    //if (!hasImg) {
+    //    iziToast.warning({ title: 'Thông báo', message: 'Vui lòng chụp ảnh lỗi', displayMode: 'replace', position: 'topRight' })
+    //    isOK = false
+    //}
     return isOK
 }
 async function submitData() {
@@ -154,7 +154,7 @@ async function submitData() {
         const Tools = $('#tools-display').find('.picked-tool').map(function () {
             return $(this).data('tool-id')
         }).get()
-        const Images = await Promise.all(
+        const Images = !$('.current-img img').length ? [] : await Promise.all(
             $('.current-img img').map(async function (index, img) {
                 return await convertIMG(img, `/Images/Defect`, index)
             }).get()

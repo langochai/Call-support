@@ -2,7 +2,6 @@
     await displayTools()
     $('#tools').searchInput(displayTools, 200)
     $('.btn-add').on('click', () => openModal())
-    displaySidebar()
     await loadDepartments();
     await loadLinecodes();
     await loadDateInput();
@@ -38,18 +37,12 @@ async function displayTools() {
         iziToast.error({ title: 'Lỗi', message: 'Load dữ liệu công cụ thất bại', position: 'topRight', displayMode: 'replace' })
     }
 }
-function displaySidebar() {
-    const $ul = $('#navigation-list')
-    $ul.empty()
-    $ul.off('click').on('click', 'li', () => { $('#backdrop').trigger('click') })
-}
 function openModal(data = {}) {
     $('#modal_title').text($.isEmptyObject(data) ? 'Thêm dụng cụ' : 'Thông tin dụng cụ')
     $('#input_name,#input_file').val('')
     $('.preview').empty()
     $('.btn-delete').hide()
     if (!$.isEmptyObject(data)) {
-        console.log(data);
         $('#input_name').val(data.ToolNm).data('tool-id', data.Id)
         $('.preview').append(`<img src="${data.Img}" class="w-100">`)
         $('.btn-delete').show()
@@ -102,7 +95,6 @@ $('.btn-save').on('click', async function () {
         var fileType = toolIMG.type.split('/')[1];
         formData.append('name', toolName);
         formData.append('file', toolIMG, `${toolName}-${Date.parse(new Date())}.${fileType}`);
-        console.log(toolIMG);
         if (!toolID) {
             $.post({
                 url: `/Tools/Create`,
@@ -168,7 +160,7 @@ async function loadLinecodes() {
     $('#lines').bsSelect({
         btnWidth: '',
         btnClass: 'btn-outline-secondary w-100 text-decoration-none',
-        btnEmptyText: 'Chọn dây chuyền',
+        btnEmptyText: 'Tất cả',
         dropDownListHeight: 300,
         //debug: true,
         showSelectionAsList: true,
@@ -208,7 +200,7 @@ async function loadRepairStatus() {
     $('#repair_status').bsSelect({
         btnWidth: '',
         btnClass: 'btn-outline-secondary w-100 text-decoration-none',
-        btnEmptyText: 'Chọn trạng thái sửa',
+        btnEmptyText: 'Tất cả',
         dropDownListHeight: 300,
         showSelectionAsList: true,
     })
@@ -282,7 +274,7 @@ async function exportExcel() {
                 const text = await response.text()
                 throw new Error(text)
             }
-            let filename = `Lịch sử gọi ${(new Date()).toISOString().substring(0, 10)}.xlsx`; // Default filename
+            let filename = `Lịch sử gọi ${toVNDateTime().slice(-10).replaceAll('/','-')}.xlsx`; // Default filename
             a.download = filename;
             return response.blob();
         })

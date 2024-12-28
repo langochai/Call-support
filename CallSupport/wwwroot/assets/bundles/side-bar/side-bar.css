@@ -16,7 +16,7 @@ body {
 	transition: left 0.3s ease-in-out;
 }
 #navigation-container {
-	width: 80vw;
+	width: 60vw;
 	background-color: white;
 	display: flex;
 	justify-content: center;

@@ -113,7 +113,7 @@ $('#backdrop').on('click', () => $('#toggle-side-bar').trigger('change'));
  * @returns {string} Datetime formated string
  */
 function toVNDateTime(dateTimeStr) {
-    const date = new Date(dateTimeStr);
+    const date = !dateTimeStr ? new Date() : new Date(dateTimeStr);
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');

@@ -8,6 +8,7 @@ function convertIMG(selector, url, index) {
         const img = $(selector)
         if (img.length > 1) throw new Error('Use one image only you retard')
         const imgSrc = img.attr('src');
+        if (!imgSrc) resolve('');
         fetch(imgSrc)
             .then(response => response.blob())
             .then(blob => {

@@ -72,12 +72,12 @@
             </div>
         </div>
         <div class="row m-0 p-0 mb-3">
-            <div class="col-12 col-md-6 d-flex justify-content-center">
+            <div class="col-12 col-md-6 mb-3 mb-sm-0 d-flex justify-content-center">
                 <div class="btn btn-primary refresh-history">
                     <span><i class="fa-solid fa-arrows-rotate"></i></span> <span>Làm mới</span>
                 </div>
             </div>
-            <div class="col-12 col-md-6 d-flex justify-content-center">
+            <div class="col-12 col-md-6 mb-3 mb-sm-0 d-flex justify-content-center">
                 <div class="btn btn-success export-excel">
                     <span><i class="fa-solid fa-file-arrow-down"></i></span> <span>Xuất excel</span>
                 </div>
@@ -150,3 +150,11 @@
 <script src="~/js/convert-img-to-blob.js"></script>
 <script src="~/js/ajax-call.js"></script>
 <script src="~/js/Master/main.js"></script>
+@section SideBar {
+    <li class="my-3 py-2" onclick="window.scrollTo(0, 0);$('#navbar-btn-toggle-sidebar').trigger('click')">
+        <a><i class="fa-solid fa-wrench"></i> Dụng cụ</a>
+    </li>
+    <li class="my-3 py-2" onclick="$('#navbar-btn-toggle-sidebar').trigger('click')">
+        <a href="#History"><i class="fa-solid fa-book"></i> Lịch sử</a>
+    </li>
+}

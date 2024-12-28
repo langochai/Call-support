@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.Json;
 
 namespace CallSupport.Controllers
@@ -49,7 +50,7 @@ namespace CallSupport.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult StartRepair(long time, string line, string section, string position, List<string> imgIDs)
+        public IActionResult StartRepair(long time, string line, string section, string position, string imgIDs)
         {
             var user = HttpContext.Session.GetObject<AuthInfoDTO>("User");
             if (!user.IsRepair) return Unauthorized("Bạn không có quyền truy cập");
@@ -72,7 +73,7 @@ namespace CallSupport.Controllers
                 updateCall.RepC = user.UserName;
                 updateCall.DepCRep = user.Department;
                 updateCall.StatusCalling = "1"; // "1" means start repairing
-                updateIMG.BeforeRepairImg = String.Join(',', imgIDs);
+                updateIMG.BeforeRepairImg = imgIDs;
                 newCallRepo.Update(updateCall);
                 newIMGRepo.Update(updateIMG);
                 return Ok();

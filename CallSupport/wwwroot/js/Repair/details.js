@@ -195,13 +195,13 @@ function receiveCall() {
     $(this).hide()
 }
 async function startRepair() {
-    if (!$('#before_repair_img .current-img img').length) return iziToast.error({
-        title: "Lỗi",
-        message: "Vui lòng nhập ảnh trước khi sửa",
-        position: 'topRight',
-        displayMode: 'replace'
-    });
-    const imgIDs = await Promise.all(
+    //if (!$('#before_repair_img .current-img img').length) return iziToast.error({
+    //    title: "Lỗi",
+    //    message: "Vui lòng nhập ảnh trước khi sửa",
+    //    position: 'topRight',
+    //    displayMode: 'replace'
+    //});
+    const imgIDs = !$('#before_repair_img .current-img img').length ? [] : await Promise.all(
         $('#before_repair_img .current-img img').map(async function (index, img) {
             return await convertIMG(img, `/Images/BeforeRepair`, index)
         }).get()
@@ -211,7 +211,7 @@ async function startRepair() {
     const line = urlParams.get('line');
     const section = urlParams.get('section');
     const position = urlParams.get('position');
-    await updateCallBeforeRepair(+time, line, section, position, imgIDs)
+    await updateCallBeforeRepair(+time, line, section, position, imgIDs.join(','))
     $('#before_repair_img .img-input').empty().addClass('mb-3');
     const repairArea = $(this).parent().parent().next()
     repairArea.show()
@@ -231,12 +231,12 @@ async function endRepair() {
             displayMode: 'replace'
         })
     }
-    if (!$('#after_repair_img .current-img img').length) return iziToast.error({
-        title: "Lỗi",
-        message: "Vui lòng nhập ảnh trước khi sửa",
-        position: 'topRight',
-        displayMode: 'replace'
-    });
+    //if (!$('#after_repair_img .current-img img').length) return iziToast.error({
+    //    title: "Lỗi",
+    //    message: "Vui lòng nhập ảnh trước khi sửa",
+    //    position: 'topRight',
+    //    displayMode: 'replace'
+    //});
     const urlParams = new URLSearchParams(window.location.search);
     const time = urlParams.get('time');
     const line = urlParams.get('line');
@@ -244,7 +244,7 @@ async function endRepair() {
     const position = urlParams.get('position');
     const groupCode = $('.table-group-defect tr.active-row td:first').text()
     const defectCode = $('.table-detailed-defect tr.active-row td:first').text()
-    const imgIDs = await Promise.all(
+    const imgIDs = !$('#after_repair_img .current-img img').length ? [] : await Promise.all(
         $('#after_repair_img .current-img img').map(async function (index, img) {
             return await convertIMG(img, `/Images/AfterRepair`, index)
         }).get()
@@ -260,6 +260,7 @@ async function endRepair() {
         displayMode: 'replace'
     })
     $('#finalize_modal').modal('show')
+    $('.btn-confirm').addClass('disabled')
 }
 $('#finalize_modal').on('shown.bs.modal', async function () {
     const urlParams = new URLSearchParams(window.location.search);

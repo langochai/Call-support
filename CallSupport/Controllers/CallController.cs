@@ -59,7 +59,7 @@ namespace CallSupport.Controllers
                     PosC = insertData.PosC,
                     Tools = String.Join(',', extra.Tools ?? Enumerable.Empty<int>()),
                     DefectNote = extra.Note,
-                    DefectImg = String.Join(',', extra.Images),
+                    DefectImg = String.Join(',', extra.Images ?? Enumerable.Empty<int>()),
                 };
                 historyIMGRepo.Create(newHistoryIMG);
                 historyRepo.Create(insertData);

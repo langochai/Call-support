@@ -31,7 +31,7 @@ async function loadLinecodes() {
     }).bsSelect({
         btnWidth: '',
         btnClass: 'btn-outline-secondary w-100 text-decoration-none',
-        btnEmptyText: 'Chọn dây chuyền',
+        btnEmptyText: 'Tất cả',
         dropDownListHeight: 300,
         //debug: true,
         showSelectionAsList: true,
@@ -108,7 +108,7 @@ async function loadRepairStatus() {
     }).bsSelect({
         btnWidth: '',
         btnClass: 'btn-outline-secondary w-100 text-decoration-none',
-        btnEmptyText: 'Chọn trạng thái sửa',
+        btnEmptyText: 'Tất cả',
         dropDownListHeight: 300,
         showSelectionAsList: true,
     })
