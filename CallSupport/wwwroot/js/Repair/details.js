@@ -201,6 +201,8 @@ async function startRepair() {
     //    position: 'topRight',
     //    displayMode: 'replace'
     //});
+    $('.btn-repair').addClass('disabled')
+    iziToast.success({ title: "Loading", message: "Đang tải dữ liệu...", position: 'topRight', displayMode: 'once', timeout: 30000 })
     const imgIDs = !$('#before_repair_img .current-img img').length ? [] : await Promise.all(
         $('#before_repair_img .current-img img').map(async function (index, img) {
             return await convertIMG(img, `/Images/BeforeRepair`, index)
@@ -216,8 +218,11 @@ async function startRepair() {
     const repairArea = $(this).parent().parent().next()
     repairArea.show()
     $(this).hide()
+    var toast = document.querySelector('.iziToast');
+    iziToast.hide({}, toast);
 }
 async function endRepair() {
+    iziToast.success({ title: "Loading", message: "Đang tải dữ liệu...", position: 'topRight', displayMode: 'once', timeout: 30000 })
     let hasSelected = $('.table-container').map(function () {
         return $(this).find('tbody tr').filter(function () {
             return $(this).hasClass('active-row');
@@ -261,6 +266,8 @@ async function endRepair() {
     })
     $('#finalize_modal').modal('show')
     $('.btn-confirm').addClass('disabled')
+    var toast = document.querySelector('.iziToast');
+    iziToast.hide({}, toast);
 }
 $('#finalize_modal').on('shown.bs.modal', async function () {
     const urlParams = new URLSearchParams(window.location.search);

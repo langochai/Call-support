@@ -1,11 +1,19 @@
 ﻿$(async () => {
-    await loadDepartments();
-    await loadLinecodes();
-    await loadDateInput();
-    await loadRepairStatus();
-    await loadHistoryData();
-    $('.refresh-history').on('click', loadHistoryData)
-    displayPrettier()
+    try {
+        await InitializeDB();
+        await loadDepartments();
+        await loadLinecodes();
+        await loadDateInput();
+        await loadRepairStatus();
+        await loadHistoryData();
+        await InitializeSignal({ refreshHistory, updateLineCodeFromBro });
+        $('.refresh-history').on('click', loadHistoryData)
+        displayPrettier()
+    }
+    catch (err) {
+        iziToast.error({ title: "Lỗi", message: "Đã có lỗi xảy ra", position: 'topRight', displayMode: 'once' })
+        console.error(err)
+    }
 })
 async function loadLinecodes() {
     const linesData = await getAllLines()
@@ -75,6 +83,7 @@ async function loadDepartments() {
     const { from_dep, to_dep } = await readRecord($('#UserName').val());
     if (from_dep) $('#from_department').bsSelect('val', from_dep)
     if (to_dep) $('#to_department').bsSelect('val', to_dep)
+    else $('#to_department').bsSelect('val', $('#Department').val())
 }
 function loadDateInput() {
     $('#from_date').each(function () {
@@ -123,7 +132,7 @@ async function loadHistoryData() {
         const toDep = $('#to_department').val()
         const lines = $('#lines').val().join(',')
         const status = $('#repair_status').val().join(',')
-        iziToast.success({ title: "Loading...", message: "Đang tải dữ liệu", position: 'topRight', displayMode: 'once', timeout: 30000 })
+        iziToast.success({ title: "Loading", message: "Đang tải dữ liệu...", position: 'topRight', displayMode: 'once', timeout: 30000 })
         const data = await getHistory(fromDate, toDate, fromDep, toDep, lines, status)
         const tbody = $('tbody')
         tbody.empty()
@@ -158,7 +167,7 @@ async function loadHistoryData() {
  * @param {object} deleted Deleted data. Returns empty string if not exist
  */
 async function refreshHistory(actionType, inserted, deleted) {
-    //console.log(actionType, inserted, deleted);
+    console.log(actionType, inserted, deleted);
     if (actionType === 'Insert') addRow(inserted, deleted)
     if (actionType === 'Update') updateRow(inserted, deleted)
     if (actionType === 'Delete') deleteRow(inserted, deleted)
@@ -166,8 +175,21 @@ async function refreshHistory(actionType, inserted, deleted) {
 async function addRow(inserted, deleted) {
     const tbody = $('tbody')
     if (!isWithinDateRange(inserted.Calling_time)) return;
-    const data = await getHistoryDetails(inserted.Calling_time, inserted.Line_c, inserted.Sec_c, inserted.Pos_c)
+    const data = await getHistoryDetails(inserted.Calling_time, inserted.Line_c, inserted.Sec_c, inserted.Pos_c);
     if (!data.length) return;
+    const fromDep = $('#from_department').val()
+    const toDep = $('#to_department').val()
+    const lines = $('#lines').val()
+    const status = $('#repair_status').val()
+    console.log(data);
+    if (
+        !isWithinDateRange(data[0].Calling_time) ||
+        (data[0].Dep_c != fromDep && fromDep?.toLowerCase() != 'all') ||
+        (data[0].ToDep_c != toDep && toDep?.toLowerCase() != 'all') ||
+        (!!lines.length && !lines.includes(data[0].Line_c)) ||
+        (!!status.length && !status.includes(data[0].Status_calling))
+    )
+        return;
     const lineStoppedClass = data[0].Status_line ? ('line-stop') : '';
     const row = $(`<tr class="${getRowClassName(data[0].Status_calling)} display-row"></tr>`)
     row.append($(`<td class="text-wrap text-break">${data[0].Line_c}</td>`))
@@ -180,12 +202,15 @@ async function addRow(inserted, deleted) {
     row.data('data', data[0])
     row.on('click', showCallDetails)
     tbody.prepend(row)
+    if (data[0].ToDep_c == $('#Department').val())
+        iziToast.success({ title: "Thông báo", message: "Có cuộc gọi mới tới bộ phận của bạn", position: 'topRight', displayMode: 'once', timeout: 30000 })
 }
 async function updateRow(inserted, deleted) {
     const tbody = $('tbody')
     if (!isWithinDateRange(inserted.Calling_time)) return;
-    const data = await getHistoryDetails(inserted.Calling_time, inserted.Line_c, inserted.Sec_c, inserted.Pos_c)
+    const data = await getHistoryDetails(inserted.Calling_time, inserted.Line_c, inserted.Sec_c, inserted.Pos_c);
     if (!data.length) return;
+    console.log(data);
     const updateRow = tbody.find('tr.display-row').filter((i, r) => {
         const rowData = $(r).data('data')
         return new Date(rowData.Calling_time).getTime() == new Date(inserted.Calling_time).getTime() &&
@@ -227,6 +252,7 @@ async function updateRow(inserted, deleted) {
 async function deleteRow(inserted, deleted) {
     const tbody = $('tbody')
     if (!isWithinDateRange(deleted.Calling_time)) return;
+    console.log(deleted)
     const row = tbody.find('tr.display-row').filter((i, r) => {
         const rowData = $(r).data('data');
         return new Date(rowData.Calling_time).getTime() == new Date(deleted.Calling_time).getTime() &&

@@ -174,8 +174,8 @@ async function submitData() {
         const result = await createCall(data, { Tools, Images, Note })
         if (result) {
             iziToast.success({ title: "Thông báo", message: "Gọi hỗ trợ thành công", displayMode: 'once', position: 'topRight' })
-            window.scrollTo(0, 0);
-            //window.location.href = "/History/Call";
+            //window.scrollTo(0, 0);
+            window.location.href = "/History/Call";
         }
     }
     catch (e) {

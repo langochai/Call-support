@@ -6,8 +6,8 @@
     var IsCaller = Context.Session.GetObject<bool>("IsCaller");
 }
 @if (IsCaller)
-{ 
-    <input type="checkbox" id="is_caller" checked hidden/>
+{
+    <input type="checkbox" id="is_caller" checked hidden />
 }
 <link href="~/css/history/styles.css" rel="stylesheet" />
 <div class="mb-2">
@@ -133,28 +133,28 @@
                 <div id="qr_code" class="d-flex justify-content-center my-5"></div>
             </div>
             @* <div class="modal-footer"> *@
-                @* <button type="button" class="btn btn-success" id="save_login_qr">Lưu</button> *@
+            @* <button type="button" class="btn btn-success" id="save_login_qr">Lưu</button> *@
             @* </div> *@
         </div>
     </div>
 </div>
 <script src="~/assets/bundles/enhanced-bootstrap-select/dist/locale/vn-vn.min.js"></script>
 <script src="~/assets/bundles/enhanced-bootstrap-select/dist/jquery.bs-select.min.js"></script>
-<script src="~/js/history/check-settings.js"></script>
 <script src="~/js/ajax-call.js"></script>
-<script src="~/js/history/main.js"></script>
-<script src="~/js/notification.js"></script>
+<script src="~/js/history/check-settings.js" asp-append-version="true" async></script>
+<script src="~/js/notification.js" asp-append-version="true" async></script>
+<script src="~/js/history/main.js" asp-append-version="true" defer></script>
 @section SideBar {
-    <li class="my-3 py-2">
-        @if (IsCaller)
-        {
+    @if (IsCaller)
+    {
+        <li class="my-3 py-2">
             <a href="/Call"><i class="fa-solid fa-phone"></i> Gọi hỗ trợ</a>
-        }
-        else
+        </li>
+    }
+    @* else
         {
             <a href="/Repair"><span><i class="fa-solid fa-screwdriver-wrench"></i> Trả lời hỗ trợ</span></a>
-        }
-    </li>
+        } *@
     <li class="my-3 py-2">
         @if (IsCaller)
         {

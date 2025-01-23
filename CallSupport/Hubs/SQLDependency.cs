@@ -23,7 +23,7 @@ namespace CallSupport.Hubs
             _hubContext = hubContext;
             _dependency = new SqlDependencyEx(_connectionString, "CallASSYDB", "history_mst");
             _dependency.TableChanged += TableChangedHandler;
-            _dependency.Stop();
+            //_dependency.Stop();
             _dependency.Start();
         }
 

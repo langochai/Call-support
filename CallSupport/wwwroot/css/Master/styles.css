@@ -115,10 +115,6 @@ td.text-wrap {
 	cursor: pointer;
 }
 
-.table-history {
-	min-width: 636px
-}
-
 tbody tr td {
 	font-weight: bold;
 	vertical-align: middle;

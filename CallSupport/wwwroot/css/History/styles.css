@@ -24,9 +24,6 @@ td.text-wrap {
     height: 100px;
     cursor: pointer;
 }
-.table-history{
-    min-width: 696px
-}
 tbody tr td {
     font-weight: bold;
     vertical-align: middle;
