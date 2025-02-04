@@ -48,6 +48,7 @@ async function loadLinecodes() {
     $('#lines').bsSelect('val', lines)
 }
 async function loadDepartments() {
+    const isCaller = $('#IsCaller').prop('checked')
     const departments = await getAllDepartments()
     $('#from_department,#to_department').empty()
     $('#from_department,#to_department').append($(`<option value='all'>Tất cả</option>`))
@@ -82,8 +83,9 @@ async function loadDepartments() {
     })
     const { from_dep, to_dep } = await readRecord($('#UserName').val());
     if (from_dep) $('#from_department').bsSelect('val', from_dep)
+    else $('#from_department').bsSelect('val', isCaller ? $('#Department').val() : 'all')
     if (to_dep) $('#to_department').bsSelect('val', to_dep)
-    else $('#to_department').bsSelect('val', $('#Department').val())
+    else $('#to_department').bsSelect('val', !isCaller ? $('#Department').val() : 'all')
 }
 function loadDateInput() {
     $('#from_date').each(function () {

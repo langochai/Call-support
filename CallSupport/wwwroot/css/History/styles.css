@@ -16,12 +16,33 @@
     .status-showcase.green {
         background: limegreen;
     }
+@media only screen and (min-width: 1024px) {
+    body {
+        font-size: 12px;
+    }
+    .status-showcase {
+        font-size: 12px;
+        height: 22px;
+    }
+    .refresh-history{
+        height: 20px;
+        font-size: 12px;
+    }
+    .accordion-button{
+        height: 30px;
+    }
+    .container{
+        max-width: 100%;
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+}
+
 input[type="date"] {
     border: 1px solid #6c757d
 }
 td.text-wrap {
     text-align: center;
-    height: 100px;
     cursor: pointer;
 }
 tbody tr td {
