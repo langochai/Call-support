@@ -10,6 +10,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Hỗ trợ dây chuyền</title>
     <link rel="stylesheet" href="~/assets/bundles/add-to-home/add-to-homescreen.min.css">
     <script src="~/assets/bundles/add-to-home/add-to-homescreen.min.js"></script>
@@ -69,6 +72,11 @@
                         </span>
                     </li>
                     <li>
+                        <label class="dropdown-item hide-header" for="hide_header">
+                            <i class="fa-solid fa-eye-slash"></i> Ẩn navbar
+                        </label>
+                    </li>
+                    <li>
                         <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#login_qr_modal">
                             <i class="fa-solid fa-qrcode"></i> Mã QR đăng nhập
                         </a>
@@ -106,6 +114,12 @@
     </div>
     <label id="backdrop" for="toggle-side-bar"></label>
     <div class="container">
+        <div class="toggle-header">
+            <label>
+                <i class="fa-solid fa-chevron-down"></i>
+                <input type="checkbox" id="hide_header" style="display:none" />
+            </label>
+        </div>
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -164,11 +178,11 @@
                 maxModalDisplayCount: -1
             });
             //window.AddToHomeScreenInstance.show('en');
-            const lng = window.navigator.userLanguage || window.navigator.language;
-            document.getElementById('create_shortcut').addEventListener('click', function (e) {
-                //window.AddToHomeScreenInstance.clearModalDisplayCount()
-                window.AddToHomeScreenInstance.show(lng?.slice(0, 2));
-            });
+            // const lng = window.navigator.userLanguage || window.navigator.language;
+            // document.getElementById('create_shortcut').addEventListener('click', function (e) {
+            //     //window.AddToHomeScreenInstance.clearModalDisplayCount()
+            //     window.AddToHomeScreenInstance.show(lng?.slice(0, 2));
+            // });
         });
     </script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -5,38 +5,21 @@
     font-size:18px;
     font-weight:bold;
     color: white;
+    cursor: pointer;
 }
+    .status-showcase.active {
+        outline: 1px solid rgb(160,160,255);
+    }
     .status-showcase.red {
         background: orangered;
     }
-    .status-showcase.yellow {
-        background: yellow;
+    .status-showcase.white {
+        background: GhostWhite;
         color: black;
     }
     .status-showcase.green {
         background: limegreen;
     }
-@media only screen and (min-width: 1024px) {
-    body {
-        font-size: 12px;
-    }
-    .status-showcase {
-        font-size: 12px;
-        height: 22px;
-    }
-    .refresh-history{
-        height: 20px;
-        font-size: 12px;
-    }
-    .accordion-button{
-        height: 30px;
-    }
-    .container{
-        max-width: 100%;
-        padding-left: 50px;
-        padding-right: 50px;
-    }
-}
 
 input[type="date"] {
     border: 1px solid #6c757d
@@ -57,7 +40,7 @@ tbody tr td {
         color: var(--text-color);
     }
     tbody tr.repairing td {
-        --bg-color: yellow;
+        --bg-color: GhostWhite;
         --text-color: black;
         background-color: var(--bg-color);
         color: var(--text-color);
@@ -87,13 +70,49 @@ tbody tr td {
         color: var(--text-color);
     }
 }
-.line-stop {
-    background-color: darkred !important;
-    color: white !important;
-}
 .info-header{
     color: dodgerblue !important;
 }
 .js-selected-text{
     color: black !important;
+}
+@media only screen and (min-width: 900px) {
+    body {
+        font-size: 12px;
+    }
+
+    .status-showcase {
+        font-size: 12px;
+        height: 22px;
+    }
+
+    .refresh-history {
+        height: 20px;
+        font-size: 12px;
+    }
+
+    .accordion-button {
+        height: 20px;
+        font-size: 12px !important;
+        padding: .25rem 1.25rem;
+    }
+
+    .fa-solid, .fas {
+        zoom: 0.8;
+    }
+
+    .container {
+        max-width: 100%;
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+
+    .accordion, .btn, .form-control {
+        --bs-btn-font-size: 12px;
+        font-size: 12px;
+    }
+
+    tr td, tr th {
+        padding: 2px 0 !important;
+    }
 }

@@ -222,7 +222,6 @@ async function startRepair() {
     iziToast.hide({}, toast);
 }
 async function endRepair() {
-    iziToast.success({ title: "Loading", message: "Đang tải dữ liệu...", position: 'topRight', displayMode: 'once', timeout: 30000 })
     let hasSelected = $('.table-container').map(function () {
         return $(this).find('tbody tr').filter(function () {
             return $(this).hasClass('active-row');
@@ -236,6 +235,7 @@ async function endRepair() {
             displayMode: 'replace'
         })
     }
+    iziToast.success({ title: "Loading", message: "Đang tải dữ liệu...", position: 'topRight', displayMode: 'once', timeout: 30000 })
     //if (!$('#after_repair_img .current-img img').length) return iziToast.error({
     //    title: "Lỗi",
     //    message: "Vui lòng nhập ảnh trước khi sửa",

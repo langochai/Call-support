@@ -240,10 +240,11 @@ async function loadHistoryData() {
         iziToast.hide({}, toast);
     }
 }
-function getRowClassName(statusCalling) {
+function getRowClassName(statusCalling, confirmTime) {
     if (statusCalling == 0) return "waiting"
-    if (statusCalling == 1) return "repairing"
-    if (statusCalling == 2) return "finished"
+    if (statusCalling == 1 && !confirmTime) return "repairing"
+    if (statusCalling == 1 && confirmTime) return "finished"
+    if (statusCalling == 2) return "confirmed"
 }
 async function exportExcel() {
     let fromDate = $('#from_date').val()

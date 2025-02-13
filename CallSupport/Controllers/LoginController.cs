@@ -27,7 +27,7 @@ namespace CallSupport.Controllers
                 var user = SQLHelper<AuthInfoDTO>.ProcedureToModel("spGetUserData",
                 new string[] { "@UserName", "@Password" },
                 new object[] { username, password });
-                if (user == null || string.IsNullOrEmpty(user.UserName)) return StatusCode(401, "Sai tên đăng nhập!");
+                if (user == null || string.IsNullOrEmpty(user.UserName)) return StatusCode(401, "Sai tên đăng nhập hoặc mật khẩu!");
                 HttpContext.Session.SetObject<AuthInfoDTO>("User", user);
                 HttpContext.Session.SetObject<bool>("IsMaster", false);
                 HttpContext.Session.SetObject<bool>("IsCaller", user.IsCaller);

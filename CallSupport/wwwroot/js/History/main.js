@@ -7,14 +7,205 @@
         await loadRepairStatus();
         await loadHistoryData();
         await InitializeSignal({ refreshHistory, updateLineCodeFromBro });
+        await requestNotificationPermission();
         $('.refresh-history').on('click', loadHistoryData)
         displayPrettier()
+        statusButtons()
     }
     catch (err) {
-        iziToast.error({ title: "Lỗi", message: "Đã có lỗi xảy ra", position: 'topRight', displayMode: 'once' })
+        iziToast.error({ title: "Lỗi", message: err.message, position: 'topRight', displayMode: 'once' })
         console.error(err)
     }
 })
+var db;
+/**
+ * Initialize browser database
+ * @returns {Promise<void>}
+ */
+function InitializeDB() {
+    return new Promise((resolve, reject) => {
+        var request = indexedDB.open('Settings', 1);
+
+        request.onupgradeneeded = function (event) {
+            db = event.target.result;
+            var objectStore = db.createObjectStore('History', { keyPath: 'username' });
+            objectStore.createIndex('username', 'username', { unique: true });
+            objectStore.createIndex('from_dep', 'from_dep', { unique: false });
+            objectStore.createIndex('to_dep', 'to_dep', { unique: false });
+            objectStore.createIndex('lines', 'lines', { unique: false });
+            objectStore.createIndex('status', 'status', { unique: false });
+            objectStore.transaction.oncomplete = function () {
+                resolve();
+            };
+            objectStore.transaction.onerror = function (e) {
+                reject(e.target.error);
+            };
+        };
+
+        request.onsuccess = function (event) {
+            db = event.target.result;
+            resolve()
+            //console.log('Database opened successfully');
+        };
+
+        request.onerror = function (event) {
+            console.log('Error opening database:', event.target.error);
+            reject()
+        };
+    })
+}
+
+/**
+ * Save new settings to DB
+ * @param {object} record
+ */
+async function createRecord(record) {
+    return new Promise((resolve, reject) => {
+        var transaction = db.transaction(['History'], 'readwrite');
+        var objectStore = transaction.objectStore('History');
+        var request = objectStore.add(record);
+
+        request.onsuccess = function (event) {
+            resolve(record);
+        };
+
+        request.onerror = function (event) {
+            reject(event.target.error);
+        };
+    });
+}
+
+/**
+ * Get settings of an user
+ * @param {string} username
+ */
+async function readRecord(username) {
+    return new Promise((resolve, reject) => {
+        var transaction = db.transaction(['History']);
+        var objectStore = transaction.objectStore('History');
+        var request = objectStore.get(username);
+
+        request.onsuccess = function (event) {
+            if (request.result) {
+                resolve(request.result);
+            } else {
+                resolve({});
+            }
+        };
+
+        request.onerror = function (event) {
+            reject(event.target.error);
+        };
+    });
+}
+
+/**
+ * Update existing settings
+ * @param {object} record
+ */
+async function updateRecord(record) {
+    return new Promise((resolve, reject) => {
+        var transaction = db.transaction(['History'], 'readwrite');
+        var objectStore = transaction.objectStore('History');
+        var request = objectStore.put(record);
+
+        request.onsuccess = function (event) {
+            resolve(record);
+        };
+
+        request.onerror = function (event) {
+            reject(event.target.error);
+        };
+    });
+}
+
+/**
+ * Delete settings of an user
+ * @param {string} username
+ */
+async function deleteRecord(username) {
+    return new Promise((resolve, reject) => {
+        var transaction = db.transaction(['History'], 'readwrite');
+        var objectStore = transaction.objectStore('History');
+        var request = objectStore.delete(username);
+
+        request.onsuccess = function (event) {
+            resolve(username);
+        };
+
+        request.onerror = function (event) {
+            reject(event.target.error);
+        };
+    });
+}
+var signalConn;
+/**
+ * Initialize signal to backend
+ * @param {object} callbacks List of callbacks. Save each of them to a property
+ * @returns {Promise<void>}
+ */
+function InitializeSignal(callbacks) {
+    return new Promise((resolve, reject) => {
+        const UserName = $('#UserName').val();
+        const Department = $('#Department').val();
+        const IsCaller = !!$('#is_caller').prop('checked');
+        signalConn = new signalR.HubConnectionBuilder()
+            .withUrl(`/notificationHub?UserName=${UserName}&Department=${Department}&IsCaller=${IsCaller}`)
+            .withAutomaticReconnect()
+            .build();
+
+        signalConn.on("RefreshHistory", (data) => {
+            data = JSON.parse(data)
+            const parser = new DOMParser();
+            const insertXMLDoc = parser.parseFromString(data.Inserted, "text/xml");
+            const deleteXMLDoc = parser.parseFromString(data.Deleted, "text/xml");
+            const inserted = data.Inserted === null ? '' : xmlToObject(insertXMLDoc.documentElement);
+            const deleted = data.Deleted === null ? '' : xmlToObject(deleteXMLDoc.documentElement);
+            callbacks.refreshHistory?.(data.NotificationType, inserted, deleted) // null properties will be omitted
+        });
+        signalConn.on("ReplyBro", (lineCode) => {
+            callbacks.updateLineCodeFromBro?.(lineCode)
+        });
+        signalConn.on("Error", (error) => {
+            console.error(error)
+            iziToast.error({ title: 'Thông báo', message: 'Kết nối đã bị ngắt', position: 'topRight', displayMode: 'once' })
+        });
+        signalConn.start().then(() => resolve()).catch(err => reject(err));
+    })
+}
+function xmlToObject(xml) {
+    const obj = {};
+    if (xml.nodeType === Node.TEXT_NODE) {
+        return xml.nodeValue.trim();
+    }
+    if (xml.attributes && xml.attributes.length > 0) {
+        obj["@attributes"] = {};
+        for (let attr of xml.attributes) {
+            obj["@attributes"][attr.nodeName] = attr.nodeValue;
+        }
+    }
+    for (let child of xml.childNodes) {
+        if (child.nodeType === Node.TEXT_NODE) {
+            const trimmedText = child.nodeValue.trim();
+            if (trimmedText) return trimmedText;
+        } else {
+            const nodeName = child.nodeName;
+            const nodeValue = xmlToObject(child);
+
+            if (obj[nodeName] === undefined) {
+                obj[nodeName] = nodeValue;
+            } else {
+                // If the node already exists, turn it into an array
+                if (!Array.isArray(obj[nodeName])) {
+                    obj[nodeName] = [obj[nodeName]];
+                }
+                obj[nodeName].push(nodeValue);
+            }
+        }
+    }
+    return (obj);
+}
+
 async function loadLinecodes() {
     const linesData = await getAllLines()
     $('#lines').empty()
@@ -48,7 +239,7 @@ async function loadLinecodes() {
     $('#lines').bsSelect('val', lines)
 }
 async function loadDepartments() {
-    const isCaller = $('#IsCaller').prop('checked')
+    const isCaller = $('#is_caller').prop('checked')
     const departments = await getAllDepartments()
     $('#from_department,#to_department').empty()
     $('#from_department,#to_department').append($(`<option value='all'>Tất cả</option>`))
@@ -125,6 +316,7 @@ async function loadRepairStatus() {
     })
     const { status } = await readRecord($('#UserName').val());
     $('#repair_status').bsSelect('val', status)
+    status?.forEach(st => $('.status-showcase').eq(+st).addClass('active'))
 }
 async function loadHistoryData() {
     try {
@@ -134,19 +326,18 @@ async function loadHistoryData() {
         const toDep = $('#to_department').val()
         const lines = $('#lines').val().join(',')
         const status = $('#repair_status').val().join(',')
-        iziToast.success({ title: "Loading", message: "Đang tải dữ liệu...", position: 'topRight', displayMode: 'once', timeout: 30000 })
+        iziToast.success({ title: "Loading", message: "Đang tải dữ liệu...", position: 'topRight', timeout: 30000 })
         const data = await getHistory(fromDate, toDate, fromDep, toDep, lines, status)
         const tbody = $('tbody')
         tbody.empty()
         data.forEach(d => {
-            const lineStoppedClass = d.Status_line ? ('line-stop') : '';
-            const row = $(`<tr class="${getRowClassName(d.Status_calling)} display-row"></tr>`)
+            const row = $(`<tr class="${getRowClassName(d.Status_calling, d.Confirm_time)} display-row"></tr>`)
             row.append($(`<td class="text-wrap text-break">${d.Line_c}</td>`))
             row.append($(`<td class="text-wrap text-break">${d.Line_nm}</td>`))
             row.append($(`<td class="text-wrap text-break">${d.Sec_nm}</td>`))
             row.append($(`<td class="text-wrap text-break">${d.Pos_nm}</td>`))
             row.append($(`<td class="text-wrap text-break">${d.ToDep_c}</td>`))
-            row.append($(`<td class="text-wrap text-break ${lineStoppedClass}">${d.tenloi}</td>`))
+            row.append($(`<td class="text-wrap text-break">${d.tenloi}</td>`))
             row.append($(`<td class="text-wrap text-break">${toVNDateTime(d.Calling_time)}</td>`))
             row.data('data', d)
             row.on('click', showCallDetails)
@@ -160,6 +351,7 @@ async function loadHistoryData() {
     finally {
         var toast = document.querySelector('.iziToast');
         iziToast.hide({}, toast);
+        rearrangeRows()
     }
 }
 /**
@@ -169,10 +361,10 @@ async function loadHistoryData() {
  * @param {object} deleted Deleted data. Returns empty string if not exist
  */
 async function refreshHistory(actionType, inserted, deleted) {
-    console.log(actionType, inserted, deleted);
-    if (actionType === 'Insert') addRow(inserted, deleted)
-    if (actionType === 'Update') updateRow(inserted, deleted)
-    if (actionType === 'Delete') deleteRow(inserted, deleted)
+    if (actionType === 'Insert') await addRow(inserted, deleted)
+    if (actionType === 'Update') await updateRow(inserted, deleted)
+    if (actionType === 'Delete') await deleteRow(inserted, deleted)
+    rearrangeRows()
 }
 async function addRow(inserted, deleted) {
     const tbody = $('tbody')
@@ -183,36 +375,38 @@ async function addRow(inserted, deleted) {
     const toDep = $('#to_department').val()
     const lines = $('#lines').val()
     const status = $('#repair_status').val()
-    console.log(data);
-    if (
-        !isWithinDateRange(data[0].Calling_time) ||
+    console.log('Inserted', data);
+    const isNotNeccessary = 
         (data[0].Dep_c != fromDep && fromDep?.toLowerCase() != 'all') ||
         (data[0].ToDep_c != toDep && toDep?.toLowerCase() != 'all') ||
         (!!lines.length && !lines.includes(data[0].Line_c)) ||
         (!!status.length && !status.includes(data[0].Status_calling))
-    )
-        return;
-    const lineStoppedClass = data[0].Status_line ? ('line-stop') : '';
-    const row = $(`<tr class="${getRowClassName(data[0].Status_calling)} display-row"></tr>`)
+    if (isNotNeccessary) return;
+    const row = $(`<tr class="${getRowClassName(data[0].Status_calling, data[0].Confirm_time)} display-row"></tr>`)
     row.append($(`<td class="text-wrap text-break">${data[0].Line_c}</td>`))
     row.append($(`<td class="text-wrap text-break">${data[0].Line_nm}</td>`))
     row.append($(`<td class="text-wrap text-break">${data[0].Sec_nm}</td>`))
     row.append($(`<td class="text-wrap text-break">${data[0].Pos_nm}</td>`))
     row.append($(`<td class="text-wrap text-break">${data[0].ToDep_c}</td>`))
-    row.append($(`<td class="text-wrap text-break ${lineStoppedClass}">${data[0].tenloi}</td>`))
+    row.append($(`<td class="text-wrap text-break">${data[0].tenloi}</td>`))
     row.append($(`<td class="text-wrap text-break">${toVNDateTime(data[0].Calling_time)}</td>`))
     row.data('data', data[0])
     row.on('click', showCallDetails)
     tbody.prepend(row)
     if (data[0].ToDep_c == $('#Department').val())
         iziToast.success({ title: "Thông báo", message: "Có cuộc gọi mới tới bộ phận của bạn", position: 'topRight', displayMode: 'once', timeout: 30000 })
+    showNotification('Thông báo', {
+        body: 'Có cuộc gọi mới tới bộ phận của bạn',
+        icon: `${window.location.origin}/favicon.ico`
+    });
 }
 async function updateRow(inserted, deleted) {
     const tbody = $('tbody')
     if (!isWithinDateRange(inserted.Calling_time)) return;
+    if (inserted.Status_calling == 2 && inserted.Finish_time) return deleteRow(null, inserted); 
     const data = await getHistoryDetails(inserted.Calling_time, inserted.Line_c, inserted.Sec_c, inserted.Pos_c);
     if (!data.length) return;
-    console.log(data);
+    console.log('Updated', data);
     const updateRow = tbody.find('tr.display-row').filter((i, r) => {
         const rowData = $(r).data('data')
         return new Date(rowData.Calling_time).getTime() == new Date(inserted.Calling_time).getTime() &&
@@ -220,15 +414,13 @@ async function updateRow(inserted, deleted) {
             rowData.Sec_c == inserted.Sec_c &&
             rowData.Pos_c == inserted.Pos_c
     }).eq(0)
-    updateRow.removeClass('waiting repairing finished').addClass(getRowClassName(data[0].Status_calling))
+    updateRow.removeClass('waiting repairing finished').addClass(getRowClassName(data[0].Status_calling, data[0].Confirm_time))
     updateRow.children('td:nth-child(1)').text(`${data[0].Line_c}`);
     updateRow.children('td:nth-child(2)').text(`${data[0].Line_nm}`);
     updateRow.children('td:nth-child(3)').text(`${data[0].Sec_nm}`);
     updateRow.children('td:nth-child(4)').text(`${data[0].Pos_nm}`);
     updateRow.children('td:nth-child(5)').text(`${data[0].ToDep_c}`);
-    updateRow.children('td:nth-child(6)').text(`${data[0].tenloi}`)
-        .removeClass('line-stop')
-        .addClass(data[0].Status_line ? 'line-stop' : '');
+    updateRow.children('td:nth-child(6)').text(`${data[0].tenloi}`);
     updateRow.children('td:nth-child(7)').text(`${toVNDateTime(data[0].Calling_time)}`);
     updateRow.data('data', data[0])
     if (updateRow.hasClass('expand')) { // Update details if it's opened
@@ -254,7 +446,7 @@ async function updateRow(inserted, deleted) {
 async function deleteRow(inserted, deleted) {
     const tbody = $('tbody')
     if (!isWithinDateRange(deleted.Calling_time)) return;
-    console.log(deleted)
+    console.log('Deleted', deleted);
     const row = tbody.find('tr.display-row').filter((i, r) => {
         const rowData = $(r).data('data');
         return new Date(rowData.Calling_time).getTime() == new Date(deleted.Calling_time).getTime() &&
@@ -264,6 +456,13 @@ async function deleteRow(inserted, deleted) {
     }).eq(0)
     if (row.hasClass('expand')) row.trigger('click');
     row.remove()
+}
+function rearrangeRows() {
+    const tbody = $('tbody');
+    const waiting = tbody.find('tr.waiting');
+    const repairing = tbody.find('tr.repairing');
+    const finished = tbody.find('tr.finished');
+    tbody.append([...waiting, ...repairing, ...finished]);
 }
 async function showCallDetails() {
     const $row = $(this)
@@ -352,10 +551,10 @@ async function showCallDetails() {
         })
     }
 }
-function getRowClassName(statusCalling) {
+function getRowClassName(statusCalling, confirmTime) {
     if (statusCalling == 0) return "waiting"
-    if (statusCalling == 1) return "repairing"
-    if (statusCalling == 2) return "finished"
+    if (statusCalling == 1 && !confirmTime) return "repairing"
+    if ((statusCalling == 1 && confirmTime) || statusCalling == 2) return "finished"
 }
 function createRepairButton(details) {
     return $(
@@ -437,4 +636,58 @@ function updateLineCodeFromBro(lineCode) {
         position: 'topRight',
         timeout: 120000,
     })
+}
+function statusButtons() {
+    $('.status-showcase').on('click', function () {
+        if ($(this).hasClass('active')) {
+            $('#repair_status').bsSelect('val', '')
+            $('.status-showcase').removeClass('active')
+        }
+        else {
+            const value = $(this).hasClass('red') ? 0 : $(this).hasClass('white') ? 1 : 2
+            $('#repair_status').bsSelect('val', value)
+            $('.status-showcase').removeClass('active')
+            $(this).addClass('active')
+        }
+        $('.refresh-history').trigger('click')
+    })
+}
+function requestNotificationPermission() {
+    if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                console.log('Notification permission granted!');
+            } else {
+                console.log('Notification permission denied!');
+            }
+        });
+    }
+}
+function showNotification(title, options) {
+    //if ('Notification' in window) {
+    //    if (Notification.permission === 'granted') {
+    //        const notification = new Notification(title, options);
+    //        notification.onclick = function (event) {
+    //            event.preventDefault();
+    //            window.focus();
+    //        };
+    //    }
+    //}
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker.ready.then(registration => {
+            console.log("Service Worker Ready:", registration);
+            registration.showNotification(title, options)
+                .then(() => console.log("Notification sent!"))
+                .catch(error => console.error("Notification failed:", error));
+        }).catch(error => console.log('Service Worker not ready:', error));
+    } else {
+        console.log('Service Worker or Push API not supported.');
+    }
+}
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service.js').then(function (registration) {
+        console.log('Service Worker registered with scope:', registration.scope);
+    }).catch(function (error) {
+        console.log('Service Worker registration failed:', error);
+    });
 }

@@ -70,7 +70,7 @@
                                 <select class="form-control col-7 mx-1" id="repair_status" multiple data-show-selection-as-list="true">
                                     <option value="0">Đang chờ</option>
                                     <option value="1">Đang sửa chữa</option>
-                                    <option value="2">Đã xác nhận</option>
+                                    <option value="2">Đã sửa chữa</option>
                                 </select>
                             </div>
                         </div>
@@ -88,18 +88,18 @@
     </div>
     <div class="col-8 row m-0 p-0">
         <span class="col-4 py-2 p-lg-0 border text-center status-showcase red">Đang chờ</span>
-        <span class="col-4 py-2 p-lg-0 border text-center status-showcase yellow">Sửa chữa</span>
-        <span class="col-4 py-2 p-lg-0 border text-center status-showcase green">Hoàn thành</span>
+        <span class="col-4 py-2 p-lg-0 border text-center status-showcase white">Đang sửa chữa</span>
+        <span class="col-4 py-2 p-lg-0 border text-center status-showcase green">Đã sửa chữa</span>
     </div>
 </div>
 <div class="mb-2 table-responsive-sm">
     <table class="table table-bordered table-hover table-history" style="table-layout:fixed">
         <colgroup>
-            <col style="width:10%" />
-            <col style="width:15%" />
-            <col style="width:15%" />
-            <col style="width:10%" />
-            <col style="width:10%" />
+            <col style="width:8%" />
+            <col style="width:17%" />
+            <col style="width:7%" />
+            <col style="width:5%" />
+            <col style="width:7%" />
             <col style="width:15%" />
             <col style="width:15%" />
         </colgroup>
@@ -141,8 +141,8 @@
 <script src="~/assets/bundles/enhanced-bootstrap-select/dist/locale/vn-vn.min.js"></script>
 <script src="~/assets/bundles/enhanced-bootstrap-select/dist/jquery.bs-select.min.js"></script>
 <script src="~/js/ajax-call.js"></script>
-<script src="~/js/history/check-settings.js" asp-append-version="true" async></script>
-<script src="~/js/notification.js" asp-append-version="true" async></script>
+@* <script src="~/js/history/check-settings.js" asp-append-version="true" async></script> *@
+@* <script src="~/js/notification.js" asp-append-version="true" async></script> *@
 <script src="~/js/history/main.js" asp-append-version="true" defer></script>
 @section SideBar {
     @if (IsCaller)

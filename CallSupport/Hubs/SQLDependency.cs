@@ -21,13 +21,16 @@ namespace CallSupport.Hubs
         {
             _connectionString = Startup.ConnectionString;
             _hubContext = hubContext;
-            _dependency = new SqlDependencyEx(_connectionString, "CallASSYDB", "history_mst");
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionString);
+            string dbName = builder.InitialCatalog;
+            // Note: Identity of sqldenpendency MUST be unique across all apps, check DB if you're not sure which to use.
+            _dependency = new SqlDependencyEx(_connectionString, dbName, "history_mst", identity: 1);
             _dependency.TableChanged += TableChangedHandler;
             //_dependency.Stop();
             _dependency.Start();
         }
 
-        private void TableChangedHandler(object sender, SqlDependencyEx.TableChangedEventArgs e) 
+        private void TableChangedHandler(object sender, SqlDependencyEx.TableChangedEventArgs e)
         {
             try
             {
@@ -36,13 +39,13 @@ namespace CallSupport.Hubs
                 var result = new
                 {
                     NotificationType = e.NotificationType.ToString(),
-                    Inserted = inserted?.ToString().Replace("<inserted>","").Replace("</inserted>", ""),
+                    Inserted = inserted?.ToString().Replace("<inserted>", "").Replace("</inserted>", ""),
                     Deleted = deleted?.ToString().Replace("<deleted>", "").Replace("</deleted>", ""),
                 };
                 string resultJson = JsonSerializer.Serialize(result, options);
                 _hubContext.Clients.All.SendAsync("RefreshHistory", resultJson).Wait();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _hubContext.Clients.All.SendAsync("Error", ex.Message).Wait();
             }

@@ -2,6 +2,7 @@
 using CallSupport.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Text.Json;
 
 namespace CallSupport.Controllers
@@ -26,6 +27,13 @@ namespace CallSupport.Controllers
             var data = SQLHelper<HistoryListDTO>.ProcedureToList("spGetHistoryList",
                 new string[] { "@FromDep", "@ToDep", "@FromLines", "@Status", "@FromDate", "@ToDate", "@Offset", "@Limit" },
                 new object[] { fromDep, toDep, lines, status, fromDate, toDate, offset, limit });
+            if (!user.IsMaster) { 
+                data = data.Where(d => Convert.ToInt32(d.Status_calling) < 2).ToList();
+                foreach(var d in data)
+                {
+                    if (d.Status_calling == "1" && d.Confirm_time != null) d.Status_calling = "2";
+                }
+            }
             return Json(data, new System.Text.Json.JsonSerializerOptions());
         }
         [HttpGet]

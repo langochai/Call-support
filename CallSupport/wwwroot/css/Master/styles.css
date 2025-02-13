@@ -97,7 +97,7 @@
 	}
 
 	.status-showcase.yellow {
-		background: yellow;
+		background: GhostWhite;
 		color: black;
 	}
 
@@ -129,7 +129,7 @@ tbody tr.waiting td {
 }
 
 tbody tr.repairing td {
-	--bg-color: yellow;
+	--bg-color: GhostWhite;
 	--text-color: black;
 	background-color: var(--bg-color);
 	color: var(--text-color);
@@ -138,6 +138,13 @@ tbody tr.repairing td {
 tbody tr.finished td {
 	--bg-color: limegreen;
 	--text-color: white;
+	background-color: var(--bg-color);
+	color: var(--text-color);
+}
+
+tbody tr.confirmed td {
+	--bg-color: skyblue;
+	--text-color: black;
 	background-color: var(--bg-color);
 	color: var(--text-color);
 }

@@ -11,6 +11,18 @@ $('#toggle-side-bar').on('change', function () {
 })
 $('[type="password"]').togglepassword('btn');
 $('header .dropdown').on('click', () => $('#toggle-side-bar').prop('checked', false).trigger('change'))
+$('#hide_header').on('change', function() {
+    const shouldHide = this.checked
+    if (shouldHide) {
+        $('.navbar').slideUp('fast', () => { $('.navbar').addClass('hide') })
+        $('main').addClass('no-navbar')
+        $('.toggle-header').show()
+    } else {
+        $('.navbar').slideDown('fast', () => { $('.navbar').removeClass('hide') })
+        $('main').removeClass('no-navbar')
+        $('.toggle-header').hide()
+    }
+})
 $('.fa-qrcode').closest('li').on('click', function () {
     $('#login_qrcode').empty()
     $.get({
